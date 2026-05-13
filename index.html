@@ -98,7 +98,7 @@
         <section id="home" class="section hero-section">
             <div class="hero-content">
                 <h1>Welcome to ZEROFY</h1>
-                <p class="hero-subtitle">Your Gateway to Smart Stock Market Analysis</p>
+                <p class="hero-subtitle">Learn the market, track trending stocks, and build a watchlist before you invest.</p>
                 <button class="cta-button" onclick="scrollToSection('about')">Learn More</button>
             </div>
         </section>
@@ -117,31 +117,31 @@
                 <div class="floater floater-2">
                     <div class="floater-icon">🎯</div>
                     <h3>Our Mission</h3>
-                    <p>We make stock market analysis simple and accessible. No confusing jargon, just clear insights to help you make smarter investment decisions. Whether you're a beginner or experienced, ZEROFY guides you.</p>
+                    <p>ZEROFY is built for people who want to understand stocks without heavy jargon. We explain market ideas in simple language so you can research with more clarity.</p>
                 </div>
 
                 <div class="floater floater-3">
                     <div class="floater-icon">🔍</div>
                     <h3>Smart Analysis</h3>
-                    <p>Our advanced tools analyze market trends, company performance, and risk factors. We break down complex data into easy-to-understand insights so you can invest with confidence.</p>
+                    <p>Review price movement, stock performance, and market direction in one place. ZEROFY helps you compare companies before adding them to your watchlist.</p>
                 </div>
 
                 <div class="floater floater-4">
                     <div class="floater-icon">💡</div>
                     <h3>Learning Hub</h3>
-                    <p>New to investing? Start here! We provide tutorials, market guides, and real-time analysis to help you understand stocks, track trends, and build your investment portfolio step by step.</p>
+                    <p>New to investing? Start with the basics, learn how prices move, and slowly build confidence by following companies you already know.</p>
                 </div>
 
                 <div class="floater floater-5">
                     <div class="floater-icon">🚀</div>
                     <h3>Real-Time Tracking</h3>
-                    <p>Monitor your favorite stocks in real-time. Get instant alerts on price changes, market news, and trading opportunities. Stay ahead with live market data and expert analysis.</p>
+                    <p>Save interesting stocks to your portfolio watchlist after login. It keeps your ideas organized while you continue learning and comparing.</p>
                 </div>
 
                 <div class="floater floater-6">
                     <div class="floater-icon">🛡️</div>
                     <h3>Safe & Secure</h3>
-                    <p>Your data is protected with enterprise-grade security. We use encryption and secure databases to keep your personal information and investment portfolio completely safe.</p>
+                    <p>Your account and watchlist are connected to a Google Sheets backend, keeping the demo simple while still saving your signup and portfolio details.</p>
                 </div>
             </div>
         </section>
@@ -187,28 +187,29 @@
             <div class="analysis-tools">
                 <div class="tool-card">
                     <h3>Stock Screener</h3>
-                    <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                    <button class="tool-btn">Open Screener</button>
+                    <p>Browse stocks by symbol, company name, price, and daily change. Use it to spot companies worth researching further.</p>
+                    <button class="tool-btn" onclick="scrollToSection('stocks')">Open Screener</button>
                 </div>
                 <div class="tool-card">
                     <h3>Portfolio Tracker</h3>
-                    <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                    <button class="tool-btn">View Portfolio</button>
+                    <p>Add stocks to your personal watchlist after login. Use it as a research list before making real investment decisions.</p>
+                    <button class="tool-btn" onclick="alert('Login and add stocks from the Stocks section to build your watchlist.')">View Portfolio</button>
                 </div>
                 <div class="tool-card">
                     <h3>Market News</h3>
-                    <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                    <button class="tool-btn">Read News</button>
+                    <p>Follow earnings, company updates, sector movement, and market headlines that can explain why prices are moving.</p>
+                    <button class="tool-btn" onclick="alert('Market news summaries are coming soon on ZEROFY.')">Read News</button>
                 </div>
             </div>
         </section>
 
         <!-- Premium Section -->
         <section id="premium" class="section premium-section">
-            <h2>Upgrade to Premium</h2>
+            <h2>ZEROFY Premium Plans</h2>
             <div class="premium-cards">
                 <div class="premium-card basic">
                     <h3>Free Plan</h3>
+                    <p>Start learning, browse stock cards, and save companies to your watchlist.</p>
                     <p class="price">$0</p>
                     <ul class="features-list">
                         <li>✓ Real-time stock quotes</li>
@@ -222,6 +223,7 @@
 
                 <div class="premium-card pro">
                     <h3>Pro Plan</h3>
+                    <p>For learners who want deeper company notes, weekly insights, and stronger watchlist review.</p>
                     <p class="price">$29<span>/month</span></p>
                     <ul class="features-list">
                         <li>✓ Real-time stock quotes</li>
@@ -230,11 +232,12 @@
                         <li>✓ Expert insights</li>
                         <li>✗ Premium support</li>
                     </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
+                    <button class="premium-btn" onclick="alert('Pro plan details are coming soon!')">Upgrade Now</button>
                 </div>
 
                 <div class="premium-card elite">
                     <h3>Elite Plan</h3>
+                    <p>For serious research with advanced portfolio review, risk insights, and priority guidance.</p>
                     <p class="price">$99<span>/month</span></p>
                     <ul class="features-list">
                         <li>✓ Real-time stock quotes</li>
@@ -243,7 +246,7 @@
                         <li>✓ Expert insights</li>
                         <li>✓ 24/7 Premium support</li>
                     </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
+                    <button class="premium-btn" onclick="alert('Elite plan details are coming soon!')">Upgrade Now</button>
                 </div>
             </div>
         </section>
@@ -304,18 +307,18 @@
         <div class="analysis-tools">
             <div class="tool-card">
                 <h3>Stock Screener</h3>
-                <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                <button class="tool-btn">Open Screener</button>
+                <p>Browse stocks by symbol, company name, price, and daily change. Use it to spot companies worth researching further.</p>
+                <button class="tool-btn" onclick="showPage('stocks')">Open Screener</button>
             </div>
             <div class="tool-card">
                 <h3>Portfolio Tracker</h3>
-                <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                <button class="tool-btn">View Portfolio</button>
+                <p>Add stocks to your personal watchlist after login. Use it as a research list before making real investment decisions.</p>
+                <button class="tool-btn" onclick="alert('Login and add stocks from the Stocks page to build your watchlist.')">View Portfolio</button>
             </div>
             <div class="tool-card">
                 <h3>Market News</h3>
-                <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                <button class="tool-btn">Read News</button>
+                <p>Follow earnings, company updates, sector movement, and market headlines that can explain why prices are moving.</p>
+                <button class="tool-btn" onclick="alert('Market news summaries are coming soon on ZEROFY.')">Read News</button>
             </div>
         </div>
     </section>
@@ -323,10 +326,11 @@
 <!-- Premium Page -->
 <div id="premiumPage" class="page-section" style="display:none;">
     <section class="section">
-        <h2>Upgrade to Premium</h2>
+        <h2>ZEROFY Premium Plans</h2>
         <div class="premium-cards">
             <div class="premium-card basic">
                 <h3>Free Plan</h3>
+                <p>Start learning, browse stock cards, and save companies to your watchlist.</p>
                 <p class="price">$0</p>
                 <ul class="features-list">
                     <li>✓ Real-time stock quotes</li>
@@ -339,6 +343,7 @@
             </div>
             <div class="premium-card pro">
                 <h3>Pro Plan</h3>
+                <p>For learners who want deeper company notes, weekly insights, and stronger watchlist review.</p>
                 <p class="price">$29<span>/month</span></p>
                 <ul class="features-list">
                     <li>✓ Real-time stock quotes</li>
@@ -347,10 +352,11 @@
                     <li>✓ Expert insights</li>
                     <li>✗ Premium support</li>
                 </ul>
-                <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
+                <button class="premium-btn" onclick="alert('Pro plan details are coming soon!')">Upgrade Now</button>
             </div>
             <div class="premium-card elite">
                 <h3>Elite Plan</h3>
+                <p>For serious research with advanced portfolio review, risk insights, and priority guidance.</p>
                 <p class="price">$99<span>/month</span></p>
                 <ul class="features-list">
                     <li>✓ Real-time stock quotes</li>
@@ -359,7 +365,7 @@
                     <li>✓ Expert insights</li>
                     <li>✓ 24/7 Premium support</li>
                 </ul>
-                <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
+                <button class="premium-btn" onclick="alert('Elite plan details are coming soon!')">Upgrade Now</button>
             </div>
         </div>
     </section>
