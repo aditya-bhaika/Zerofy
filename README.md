@@ -286,9 +286,9 @@ For production:
 
 ## 📞 Support & Contact
 
-**Email**: support@zerofy.in  
-**Focus**: Stock research, watchlists, portfolio learning, and investor education  
-**Website**: Zerofy web app
+**Email**: info@zerofy.com  
+**Phone**: +1 (555) 123-4567  
+**Website**: Coming soon!
 
 ## 📄 License
 
