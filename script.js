@@ -3,55 +3,73 @@
    JavaScript File
    ===================================================== */
 
-// ===== INTERACTIVE PARTICLE BACKGROUND (canvas) =====
+// ===== INTERACTIVE MONEY BACKGROUND (canvas) =====
 
-(function initInteractiveBackground() {
+(function initInteractiveMoneyBackground() {
     const canvas = document.getElementById('stockBackground');
     if (!canvas || !canvas.getContext) return;
 
     const ctx = canvas.getContext('2d');
     const pointer = { x: 0, y: 0, active: false };
 
-    let particles = [];
-    let linkRadius = 92;
-    let repelRadius = 168;
+    const CURRENCY_SYMBOLS = ['$', '₹', '€', '£', '¥', '₿', '¢', '¤'];
+    const MARKET_MARKS = ['+', '%', '≈', '∑'];
 
-    function particleCountForViewport() {
+    let pieces = [];
+    let repelRadius = 160;
+
+    function moneyCountForViewport() {
         const w = window.innerWidth;
-        const area = (w * window.innerHeight) / 1e6;
-        if (w < 480) return Math.min(52, Math.round(36 + area * 4));
-        if (w < 768) return Math.min(72, Math.round(48 + area * 5));
-        if (w < 1200) return Math.min(96, Math.round(64 + area * 4));
-        return Math.min(120, Math.round(80 + area * 3));
+        if (w < 480) return 34;
+        if (w < 768) return 46;
+        if (w < 1200) return 58;
+        return 72;
     }
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        linkRadius = canvas.width < 520 ? 78 : 92;
-        repelRadius = canvas.width < 520 ? 130 : 168;
+        repelRadius = canvas.width < 520 ? 128 : 168;
         ctx.fillStyle = '#060809';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        rebuildParticles();
+        rebuildPieces();
     }
 
-    function rebuildParticles() {
-        const n = particleCountForViewport();
-        particles = [];
+    function rebuildPieces() {
+        const n = moneyCountForViewport();
+        pieces = [];
         for (let i = 0; i < n; i++) {
-            particles.push(new Particle());
+            pieces.push(new MoneyPiece());
         }
     }
 
-    class Particle {
+    function pickGlyph() {
+        const r = Math.random();
+        if (r < 0.72) return { kind: 'symbol', char: CURRENCY_SYMBOLS[Math.floor(Math.random() * CURRENCY_SYMBOLS.length)] };
+        if (r < 0.9) return { kind: 'symbol', char: MARKET_MARKS[Math.floor(Math.random() * MARKET_MARKS.length)] };
+        return { kind: 'note' };
+    }
+
+    class MoneyPiece {
         constructor() {
+            const g = pickGlyph();
+            this.kind = g.kind;
+            this.char = g.char || '$';
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.55;
-            this.vy = (Math.random() - 0.5) * 0.55;
-            this.size = Math.random() * 1.6 + 0.45;
-            this.opacity = Math.random() * 0.35 + 0.18;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.rotation = Math.random() * Math.PI * 2;
+            this.spin = (Math.random() - 0.5) * 0.0035;
             this.phase = Math.random() * Math.PI * 2;
+            if (this.kind === 'note') {
+                this.fontSize = 12 + Math.random() * 8;
+                this.opacity = 0.18 + Math.random() * 0.22;
+            } else {
+                this.fontSize = 16 + Math.random() * 28;
+                this.opacity = 0.14 + Math.random() * 0.32;
+            }
+            this.tint = Math.random() > 0.42 ? 'green' : 'gold';
         }
 
         update() {
@@ -69,83 +87,100 @@
                     const strength = (r - dist) / r;
                     const nx = dx / dist;
                     const ny = dy / dist;
-                    const push = strength * 1.05;
-                    this.vx += nx * push * 0.14;
-                    this.vy += ny * push * 0.14;
+                    const push = strength * 1.02;
+                    this.vx += nx * push * 0.16;
+                    this.vy += ny * push * 0.16;
+                    this.spin += strength * (nx * this.vy - ny * this.vx) * 0.000045;
                 }
             }
 
-            this.vx += Math.sin(t + this.phase) * 0.018;
-            this.vy += Math.cos(t * 0.9 + this.phase * 1.3) * 0.018;
-            this.vx += (Math.random() - 0.5) * 0.012;
-            this.vy += (Math.random() - 0.5) * 0.012;
+            this.vx += Math.sin(t * 0.85 + this.phase) * 0.016;
+            this.vy += Math.cos(t * 0.7 + this.phase * 1.2) * 0.016;
+            this.vx += (Math.random() - 0.5) * 0.01;
+            this.vy += (Math.random() - 0.5) * 0.01;
 
-            this.vx *= 0.988;
-            this.vy *= 0.988;
+            this.vx *= 0.987;
+            this.vy *= 0.987;
+            this.spin *= 0.993;
 
+            this.rotation += this.spin;
             this.x += this.vx;
             this.y += this.vy;
 
-            if (this.x < 0) this.x += pw;
-            else if (this.x > pw) this.x -= pw;
-            if (this.y < 0) this.y += ph;
-            else if (this.y > ph) this.y -= ph;
+            if (this.x < -40) this.x = pw + 40;
+            else if (this.x > pw + 40) this.x = -40;
+            if (this.y < -40) this.y = ph + 40;
+            else if (this.y > ph + 40) this.y = -40;
         }
 
         draw() {
-            ctx.fillStyle = `rgba(230, 245, 255, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    function drawConnections() {
-        const maxD = linkRadius;
-        const maxDSq = maxD * maxD;
-        const px = pointer.x;
-        const py = pointer.y;
-        const nearBoost = pointer.active;
-
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const distSq = dx * dx + dy * dy;
-                if (distSq >= maxDSq) continue;
-
-                const dist = Math.sqrt(distSq);
-                let alpha = 0.1 * (1 - dist / maxD);
-                if (nearBoost) {
-                    const mx = (particles[i].x + particles[j].x) * 0.5;
-                    const my = (particles[i].y + particles[j].y) * 0.5;
-                    const dLine = Math.hypot(mx - px, my - py);
-                    const glowR = 210;
-                    if (dLine < glowR) {
-                        alpha += 0.2 * (1 - dLine / glowR);
-                    }
-                }
-                alpha = Math.min(0.52, alpha);
-
-                ctx.strokeStyle = `rgba(0, 208, 132, ${alpha})`;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
+            let boost = 0;
+            if (pointer.active) {
+                const d = Math.hypot(this.x - pointer.x, this.y - pointer.y);
+                if (d < 200) boost = (1 - d / 200) * 0.42;
             }
+            const alpha = Math.min(0.92, this.opacity + boost);
+
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+
+            if (this.kind === 'symbol') {
+                const fs = this.fontSize;
+                ctx.font = `700 ${fs}px "Segoe UI", "Helvetica Neue", system-ui, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                if (this.tint === 'gold') {
+                    ctx.fillStyle = `rgba(230, 196, 95, ${alpha})`;
+                } else {
+                    ctx.fillStyle = `rgba(0, 208, 132, ${alpha})`;
+                }
+                if (boost > 0.06) {
+                    ctx.shadowColor = 'rgba(0, 208, 132, 0.55)';
+                    ctx.shadowBlur = 10 + boost * 22;
+                }
+                ctx.fillText(this.char, 0, 0);
+                ctx.shadowBlur = 0;
+            } else {
+                const w = this.fontSize * 2.35;
+                const h = this.fontSize * 1.15;
+                const rr = 4;
+                ctx.fillStyle = `rgba(6, 18, 12, ${Math.min(0.88, alpha + 0.05)})`;
+                ctx.strokeStyle = `rgba(0, 208, 132, ${alpha})`;
+                ctx.lineWidth = 1.25;
+                if (typeof ctx.roundRect === 'function') {
+                    ctx.beginPath();
+                    ctx.roundRect(-w / 2, -h / 2, w, h, rr);
+                    ctx.fill();
+                    ctx.stroke();
+                } else {
+                    ctx.fillRect(-w / 2, -h / 2, w, h);
+                    ctx.strokeRect(-w / 2, -h / 2, w, h);
+                }
+                ctx.fillStyle = `rgba(0, 208, 132, ${alpha * 0.9})`;
+                ctx.font = `600 ${Math.max(10, this.fontSize * 0.5)}px "Segoe UI", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('₹', 0, 0);
+                ctx.fillStyle = `rgba(255,255,255,${alpha * 0.12})`;
+                ctx.fillRect(-w / 2 + 4, -h / 2 + 3, w * 0.22, h - 6);
+            }
+
+            ctx.restore();
         }
     }
 
     function tick() {
-        ctx.fillStyle = 'rgba(6, 8, 10, 0.32)';
+        ctx.fillStyle = 'rgba(6, 8, 10, 0.3)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        particles.forEach(p => {
-            p.update();
-            p.draw();
+        pieces.forEach(p => p.update());
+        pieces.forEach(p => {
+            if (p.kind === 'note') p.draw();
         });
-        drawConnections();
+        pieces.forEach(p => {
+            if (p.kind !== 'note') p.draw();
+        });
 
         requestAnimationFrame(tick);
     }

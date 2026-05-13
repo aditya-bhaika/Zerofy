@@ -45,7 +45,7 @@ body {
     width: 100%;
     height: 100vh;
     height: 100dvh;
-    /* Solid base; all motion is drawn on the canvas (interactive particles) */
+    /* Dark base; animated currency / notes drawn on canvas */
     background: #060809;
     z-index: 1;
     pointer-events: none;
