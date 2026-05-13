@@ -44,7 +44,9 @@ body {
     left: 0;
     width: 100%;
     height: 100vh;
-    background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+    height: 100dvh;
+    /* Solid base; all motion is drawn on the canvas (interactive particles) */
+    background: #060809;
     z-index: 1;
     pointer-events: none;
 }

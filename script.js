@@ -3,64 +3,131 @@
    JavaScript File
    ===================================================== */
 
-// ===== INTERACTIVE BACKGROUND CANVAS =====
+// ===== INTERACTIVE PARTICLE BACKGROUND (canvas) =====
 
-const canvas = document.getElementById('stockBackground');
-const ctx = canvas.getContext('2d');
+(function initInteractiveBackground() {
+    const canvas = document.getElementById('stockBackground');
+    if (!canvas || !canvas.getContext) return;
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
+    const ctx = canvas.getContext('2d');
+    const pointer = { x: 0, y: 0, active: false };
 
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+    let particles = [];
+    let linkRadius = 92;
+    let repelRadius = 168;
 
-// Particle system for animated background
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
-        this.opacity = Math.random() * 0.5 + 0.2;
-        this.float = Math.random() * 2 + 1;
+    function particleCountForViewport() {
+        const w = window.innerWidth;
+        const area = (w * window.innerHeight) / 1e6;
+        if (w < 480) return Math.min(52, Math.round(36 + area * 4));
+        if (w < 768) return Math.min(72, Math.round(48 + area * 5));
+        if (w < 1200) return Math.min(96, Math.round(64 + area * 4));
+        return Math.min(120, Math.round(80 + area * 3));
     }
 
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY + Math.sin(Date.now() / this.float) * 0.2;
-
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        linkRadius = canvas.width < 520 ? 78 : 92;
+        repelRadius = canvas.width < 520 ? 130 : 168;
+        ctx.fillStyle = '#060809';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        rebuildParticles();
     }
 
-    draw() {
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+    function rebuildParticles() {
+        const n = particleCountForViewport();
+        particles = [];
+        for (let i = 0; i < n; i++) {
+            particles.push(new Particle());
+        }
     }
-}
 
-const particles = [];
-for (let i = 0; i < 100; i++) {
-    particles.push(new Particle());
-}
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.55;
+            this.vy = (Math.random() - 0.5) * 0.55;
+            this.size = Math.random() * 1.6 + 0.45;
+            this.opacity = Math.random() * 0.35 + 0.18;
+            this.phase = Math.random() * Math.PI * 2;
+        }
 
-// Draw connecting lines between particles
-function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+        update() {
+            const pw = canvas.width;
+            const ph = canvas.height;
+            const t = Date.now() * 0.001;
 
-            if (distance < 100) {
-                ctx.strokeStyle = `rgba(0, 208, 132, ${0.2 * (1 - distance / 100)})`;
+            if (pointer.active) {
+                const dx = this.x - pointer.x;
+                const dy = this.y - pointer.y;
+                const distSq = dx * dx + dy * dy;
+                const r = repelRadius;
+                if (distSq < r * r && distSq > 1) {
+                    const dist = Math.sqrt(distSq);
+                    const strength = (r - dist) / r;
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    const push = strength * 1.05;
+                    this.vx += nx * push * 0.14;
+                    this.vy += ny * push * 0.14;
+                }
+            }
+
+            this.vx += Math.sin(t + this.phase) * 0.018;
+            this.vy += Math.cos(t * 0.9 + this.phase * 1.3) * 0.018;
+            this.vx += (Math.random() - 0.5) * 0.012;
+            this.vy += (Math.random() - 0.5) * 0.012;
+
+            this.vx *= 0.988;
+            this.vy *= 0.988;
+
+            this.x += this.vx;
+            this.y += this.vy;
+
+            if (this.x < 0) this.x += pw;
+            else if (this.x > pw) this.x -= pw;
+            if (this.y < 0) this.y += ph;
+            else if (this.y > ph) this.y -= ph;
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(230, 245, 255, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function drawConnections() {
+        const maxD = linkRadius;
+        const maxDSq = maxD * maxD;
+        const px = pointer.x;
+        const py = pointer.y;
+        const nearBoost = pointer.active;
+
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq >= maxDSq) continue;
+
+                const dist = Math.sqrt(distSq);
+                let alpha = 0.1 * (1 - dist / maxD);
+                if (nearBoost) {
+                    const mx = (particles[i].x + particles[j].x) * 0.5;
+                    const my = (particles[i].y + particles[j].y) * 0.5;
+                    const dLine = Math.hypot(mx - px, my - py);
+                    const glowR = 210;
+                    if (dLine < glowR) {
+                        alpha += 0.2 * (1 - dLine / glowR);
+                    }
+                }
+                alpha = Math.min(0.52, alpha);
+
+                ctx.strokeStyle = `rgba(0, 208, 132, ${alpha})`;
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(particles[i].x, particles[i].y);
@@ -69,64 +136,48 @@ function drawConnections() {
             }
         }
     }
-}
 
-// Stock market chart animation
-let chartY = [];
-const chartPoints = 150;
-for (let i = 0; i < chartPoints; i++) {
-    chartY.push(Math.random() * 200 + 100);
-}
+    function tick() {
+        ctx.fillStyle = 'rgba(6, 8, 10, 0.32)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function drawChart() {
-    const chartHeight = canvas.height * 0.3;
-    const chartX = canvas.width * 0.05;
-    const chartStartY = canvas.height * 0.7;
-    const spacing = (canvas.width * 0.9) / chartPoints;
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        drawConnections();
 
-    ctx.strokeStyle = 'rgba(0, 208, 132, 0.2)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-
-    for (let i = 0; i < chartPoints; i++) {
-        const x = chartX + i * spacing;
-        const y = chartStartY - (chartY[i] / 300) * chartHeight;
-
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
+        requestAnimationFrame(tick);
     }
-    ctx.stroke();
 
-    // Shift chart data
-    chartY.shift();
-    chartY.push(Math.random() * 200 + 80);
-}
+    let pointerIdleTimer;
+    window.addEventListener(
+        'pointermove',
+        e => {
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+            pointer.active = true;
+            clearTimeout(pointerIdleTimer);
+            pointerIdleTimer = window.setTimeout(() => {
+                pointer.active = false;
+            }, 2200);
+        },
+        { passive: true }
+    );
 
-// Animation loop
-function animateBackground() {
-    // Clear canvas
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Update and draw particles
-    particles.forEach(particle => {
-        particle.update();
-        particle.draw();
+    window.addEventListener('blur', () => {
+        pointer.active = false;
     });
 
-    // Draw connections
-    drawConnections();
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) pointer.active = false;
+    });
 
-    // Draw stock chart
-    drawChart();
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-    requestAnimationFrame(animateBackground);
-}
-
-animateBackground();
+    requestAnimationFrame(tick);
+})();
 
 // ===== GOOGLE SHEETS BACKEND INTEGRATION =====
 
