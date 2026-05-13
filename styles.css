@@ -1238,23 +1238,58 @@ a.cta-button {
 }
 
 .profile-plan-floater {
-    background: rgba(255, 255, 255, 0.96);
-    border-radius: 18px;
-    border-left: 4px solid var(--green);
+    background: linear-gradient(180deg, rgba(8, 12, 18, 0.96) 0%, rgba(12, 18, 28, 0.95) 100%);
+    border-radius: 22px;
+    border-left: 4px solid rgba(0, 208, 132, 0.95);
+    border: 1px solid rgba(0, 208, 132, 0.18);
     padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+    margin: 1.5rem 0 2rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
 .profile-plan-floater h3 {
-    color: var(--primary-color);
+    color: var(--secondary-color);
     margin-bottom: 0.75rem;
 }
 
 .profile-plan-floater p {
-    color: var(--dark-gray);
+    color: rgba(255, 255, 255, 0.82);
     line-height: 1.75;
     font-size: 0.98rem;
+}
+
+.profile-plan-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.profile-topup-btn {
+    min-width: 160px;
+    border-radius: 999px;
+    padding: 0.95rem 1.5rem;
+    background: linear-gradient(135deg, #00d084 0%, #21b57a 100%);
+    color: var(--primary-color);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 30px rgba(0, 208, 132, 0.25);
+}
+
+.profile-topup-btn:hover {
+    transform: translateY(-2px);
+}
+
+.profile-logout-btn {
+    background: rgba(255, 51, 51, 0.95);
+    color: var(--secondary-color);
+    padding: 0.95rem 1.35rem;
+}
+
+.profile-logout-btn:hover {
+    background: rgba(255, 51, 51, 0.85);
 }
 
 .profile-plan-actions {
@@ -1299,7 +1334,7 @@ a.cta-button {
 
 .commodity-chart.animate-on-scroll.is-visible .gold-trend,
 .commodity-chart.animate-on-scroll.is-visible .silver-trend {
-    animation: lineDraw 1.8s ease forwards;
+    animation: lineDraw 3.0s ease forwards;
 }
 
 @keyframes lineDraw {

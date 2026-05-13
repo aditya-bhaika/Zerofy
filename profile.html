@@ -43,16 +43,6 @@
             <p style="text-align: center; color: rgba(255,255,255,0.75); max-width: 520px; margin: -2rem auto 2rem;">
                 View your account details and add extra information (date of birth and your current ZEROFY plan). This is stored in your browser session for this visit.
             </p>
-            <div class="profile-plan-floater floater animate-on-scroll">
-                <div class="floater-icon">💳</div>
-                <h3>Your current plan</h3>
-                <p>Active plan: <strong id="profileCurrentPlan">Free</strong></p>
-                <p>Upgrade or top up to access premium tools, deeper analysis, and faster market signals.</p>
-                <div class="profile-plan-actions">
-                    <a href="premium.html" class="cta-button profile-topup-btn">Top Up</a>
-                    <button type="button" class="logout-btn profile-logout-btn" onclick="logout()">Logout</button>
-                </div>
-            </div>
             <div class="modal-content auth-panel" style="max-width: 520px;">
                 <h3 style="color: var(--secondary-color); margin-bottom: 1rem; font-size: 1.1rem;">Account</h3>
                 <div class="profile-readonly"><span>Name</span><strong id="profileDisplayName">—</strong></div>
@@ -76,6 +66,18 @@
                     </div>
                     <button type="submit" class="submit-btn">Save profile</button>
                 </form>
+            </div>
+            <div class="profile-plan-floater floater animate-on-scroll">
+                <div class="floater-icon">💳</div>
+                <h3>Your current plan</h3>
+                <p>Active plan: <strong id="profileCurrentPlan">Free</strong></p>
+                <p>Upgrade or top up to access premium tools, deeper analysis, and faster market signals.</p>
+                <div class="profile-plan-actions">
+                    <a href="premium.html" class="cta-button profile-topup-btn">Top Up</a>
+                </div>
+            </div>
+            <div class="text-center" style="margin-bottom: 2rem;">
+                <button type="button" class="logout-btn profile-logout-btn" onclick="logout()">Logout</button>
             </div>
         </section>
     </main>
