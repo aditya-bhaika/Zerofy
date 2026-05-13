@@ -24,16 +24,19 @@
                     <a href="about.html" class="nav-link">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#stocks" class="nav-link">Stocks</a>
+                    <a href="stocks.html" class="nav-link">Stocks</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#analyse" class="nav-link">Analyse</a>
+                    <a href="analyse.html" class="nav-link">Analyse</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#premium" class="nav-link">Premium</a>
+                    <a href="premium.html" class="nav-link">Premium</a>
+                </li>
+                <li class="nav-item" id="profileNavItem" style="display: none;">
+                    <a href="profile.html" class="nav-link">Profile</a>
                 </li>
                 <li class="nav-item" id="loginItem">
-                    <a href="#login" class="nav-link login-btn" onclick="openLoginModal(); return false;">Login</a>
+                    <a href="login.html" class="nav-link login-btn">Login</a>
                 </li>
                 <li class="nav-item" id="userProfile" style="display: none;">
                     <span class="user-welcome">Welcome, <span id="userName">User</span></span>
@@ -51,50 +54,6 @@
 
     <!-- Interactive Background Canvas -->
     <canvas id="stockBackground"></canvas>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeLoginModal()">&times;</span>
-            <h2>Login to ZEROFY</h2>
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="submit-btn">Login</button>
-                <p class="switch-form">Don't have an account? <a href="#" onclick="switchToSignup()">Sign Up</a></p>
-            </form>
-        </div>
-    </div>
-
-    <!-- Signup Modal -->
-    <div id="signupModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeSignupModal()">&times;</span>
-            <h2>Create Account</h2>
-            <form id="signupForm" onsubmit="handleSignup(event)">
-                <div class="form-group">
-                    <label for="signupName">Full Name:</label>
-                    <input type="text" id="signupName" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupEmail">Email:</label>
-                    <input type="email" id="signupEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupPassword">Password:</label>
-                    <input type="password" id="signupPassword" name="password" required>
-                </div>
-                <button type="submit" class="submit-btn">Sign Up</button>
-                <p class="switch-form">Already have an account? <a href="#" onclick="switchToLogin()">Login</a></p>
-            </form>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <main>
@@ -250,155 +209,8 @@
                 </div>
             </div>
         </section>
-
-        <!-- Stocks Section -->
-        <section id="stocks" class="section stocks-section">
-            <h2>Trending Stocks</h2>
-            <div class="stocks-grid" id="stocksGrid">
-                <!-- Stocks will be populated by JavaScript -->
-            </div>
-        </section>
-
-        <!-- Analyse Section -->
-        <section id="analyse" class="section analyse-section">
-            <h2>Market Analysis Tools</h2>
-            <div class="analysis-tools">
-                <div class="tool-card">
-                    <h3>Stock Screener</h3>
-                    <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                    <button class="tool-btn">Open Screener</button>
-                </div>
-                <div class="tool-card">
-                    <h3>Portfolio Tracker</h3>
-                    <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                    <button class="tool-btn">View Portfolio</button>
-                </div>
-                <div class="tool-card">
-                    <h3>Market News</h3>
-                    <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                    <button class="tool-btn">Read News</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Premium Section -->
-        <section id="premium" class="section premium-section">
-            <h2>Upgrade to Premium</h2>
-            <div class="premium-cards">
-                <div class="premium-card basic">
-                    <h3>Free Plan</h3>
-                    <p class="price">$0</p>
-                    <ul class="features-list">
-                        <li>✓ Real-time stock quotes</li>
-                        <li>✓ Basic analysis tools</li>
-                        <li>✓ Portfolio tracking</li>
-                        <li>✗ Advanced analytics</li>
-                        <li>✗ Premium support</li>
-                    </ul>
-                    <button class="premium-btn">Current Plan</button>
-                </div>
-
-                <div class="premium-card pro">
-                    <h3>Pro Plan</h3>
-                    <p class="price">$29<span>/month</span></p>
-                    <ul class="features-list">
-                        <li>✓ Real-time stock quotes</li>
-                        <li>✓ Advanced analytics</li>
-                        <li>✓ Portfolio tracking</li>
-                        <li>✓ Expert insights</li>
-                        <li>✗ Premium support</li>
-                    </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
-                </div>
-
-                <div class="premium-card elite">
-                    <h3>Elite Plan</h3>
-                    <p class="price">$99<span>/month</span></p>
-                    <ul class="features-list">
-                        <li>✓ Real-time stock quotes</li>
-                        <li>✓ Advanced analytics</li>
-                        <li>✓ Portfolio tracking</li>
-                        <li>✓ Expert insights</li>
-                        <li>✓ 24/7 Premium support</li>
-                    </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <!-- SPA views (same content as in-page sections; shown when nav uses showPage) -->
-    <div id="stocksPage" class="page-section" style="display:none;">
-        <section class="section">
-            <h2>Trending Stocks</h2>
-            <div class="stocks-grid" id="stocksGridPage"></div>
-        </section>
-    </div>
-    <div id="analysePage" class="page-section" style="display:none;">
-        <section class="section">
-            <h2>Market Analysis Tools</h2>
-            <div class="analysis-tools">
-                <div class="tool-card">
-                    <h3>Stock Screener</h3>
-                    <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                    <button class="tool-btn">Open Screener</button>
-                </div>
-                <div class="tool-card">
-                    <h3>Portfolio Tracker</h3>
-                    <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                    <button class="tool-btn">View Portfolio</button>
-                </div>
-                <div class="tool-card">
-                    <h3>Market News</h3>
-                    <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                    <button class="tool-btn">Read News</button>
-                </div>
-            </div>
-        </section>
-    </div>
-    <div id="premiumPage" class="page-section" style="display:none;">
-        <section class="section">
-            <h2>Upgrade to Premium</h2>
-            <div class="premium-cards">
-                <div class="premium-card basic">
-                    <h3>Free Plan</h3>
-                    <p class="price">$0</p>
-                    <ul class="features-list">
-                        <li>✓ Real-time stock quotes</li>
-                        <li>✓ Basic analysis tools</li>
-                        <li>✓ Portfolio tracking</li>
-                        <li>✗ Advanced analytics</li>
-                        <li>✗ Premium support</li>
-                    </ul>
-                    <button class="premium-btn">Current Plan</button>
-                </div>
-                <div class="premium-card pro">
-                    <h3>Pro Plan</h3>
-                    <p class="price">$29<span>/month</span></p>
-                    <ul class="features-list">
-                        <li>✓ Real-time stock quotes</li>
-                        <li>✓ Advanced analytics</li>
-                        <li>✓ Portfolio tracking</li>
-                        <li>✓ Expert insights</li>
-                        <li>✗ Premium support</li>
-                    </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
-                </div>
-                <div class="premium-card elite">
-                    <h3>Elite Plan</h3>
-                    <p class="price">$99<span>/month</span></p>
-                    <ul class="features-list">
-                        <li>✓ Real-time stock quotes</li>
-                        <li>✓ Advanced analytics</li>
-                        <li>✓ Portfolio tracking</li>
-                        <li>✓ Expert insights</li>
-                        <li>✓ 24/7 Premium support</li>
-                    </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
-                </div>
-            </div>
-        </section>
-    </div>
     <div id="logoutPage" class="page-section" style="display:none;">
         <section class="section">
             <h2>You have been logged out.</h2>
@@ -418,8 +230,9 @@
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="about.html">About Us</a></li>
-                    <li><a href="#stocks">Stocks</a></li>
-                    <li><a href="#analyse">Analyse</a></li>
+                    <li><a href="stocks.html">Stocks</a></li>
+                    <li><a href="analyse.html">Analyse</a></li>
+                    <li><a href="premium.html">Premium</a></li>
                 </ul>
             </div>
             <div class="footer-section">

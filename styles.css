@@ -1257,6 +1257,25 @@ a.cta-button {
     box-shadow: 0 0 10px rgba(0, 208, 132, 0.2);
 }
 
+.form-group select {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: var(--secondary-color);
+    font-size: 1rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: var(--green);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 208, 132, 0.2);
+}
+
 .submit-btn {
     width: 100%;
     padding: 1rem;
@@ -1761,4 +1780,51 @@ a.cta-button {
 
 .page-section .section {
     min-height: auto;
+}
+
+/* =====================================================
+   AUTH PAGE (login.html — no canvas / FinBot)
+   ===================================================== */
+
+body.auth-page {
+    min-height: 100vh;
+}
+
+.auth-main {
+    position: relative;
+    z-index: 2;
+    margin-top: 70px;
+    padding: 2.5rem 1.25rem 4rem;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+}
+
+.auth-page .modal-content.auth-panel {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 420px;
+    animation: none;
+}
+
+.profile-readonly {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: rgba(255, 255, 255, 0.88);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.profile-readonly span {
+    color: rgba(255, 255, 255, 0.5);
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
 }

@@ -281,10 +281,19 @@ class SessionManager {
     }
 
     saveSession(user) {
+        let prev = {};
+        try {
+            prev = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+        } catch (e) {
+            prev = {};
+        }
+        const merged = { ...prev, ...user };
         const normalizedUser = {
-            ...user,
-            portfolio: normalizePortfolio(user.portfolio),
-            savedStocks: normalizePortfolio(user.savedStocks)
+            ...merged,
+            portfolio: normalizePortfolio(merged.portfolio),
+            savedStocks: normalizePortfolio(merged.savedStocks),
+            dateOfBirth: merged.dateOfBirth != null ? String(merged.dateOfBirth) : '',
+            plan: merged.plan != null ? String(merged.plan) : ''
         };
 
         sessionStorage.setItem('currentUser', JSON.stringify(normalizedUser));
@@ -299,6 +308,8 @@ class SessionManager {
                 this.currentUser = JSON.parse(stored);
                 this.currentUser.portfolio = normalizePortfolio(this.currentUser.portfolio);
                 this.currentUser.savedStocks = normalizePortfolio(this.currentUser.savedStocks);
+                if (this.currentUser.dateOfBirth == null) this.currentUser.dateOfBirth = '';
+                if (this.currentUser.plan == null) this.currentUser.plan = '';
                 this.updateUI();
                 return this.currentUser;
             } catch (error) {
@@ -327,24 +338,39 @@ class SessionManager {
         const loginItem = document.getElementById('loginItem');
         const userProfile = document.getElementById('userProfile');
         const userName = document.getElementById('userName');
+        const profileNavItem = document.getElementById('profileNavItem');
 
         if (this.currentUser) {
-            loginItem.style.display = 'none';
-            userProfile.style.display = 'flex';
-            userProfile.style.gap = '1rem';
-            userProfile.style.alignItems = 'center';
-            userName.textContent = (this.currentUser.name || this.currentUser.email || 'User').split(' ')[0];
+            if (loginItem) loginItem.style.display = 'none';
+            if (userProfile) {
+                userProfile.style.display = 'flex';
+                userProfile.style.gap = '1rem';
+                userProfile.style.alignItems = 'center';
+            }
+            if (userName) {
+                userName.textContent = (this.currentUser.name || this.currentUser.email || 'User').split(' ')[0];
+            }
+            if (profileNavItem) profileNavItem.style.display = 'list-item';
         } else {
-            loginItem.style.display = 'block';
-            userProfile.style.display = 'none';
+            if (loginItem) loginItem.style.display = 'list-item';
+            if (userProfile) userProfile.style.display = 'none';
+            if (profileNavItem) profileNavItem.style.display = 'none';
         }
     }
 }
 
 const sessionManager = new SessionManager();
 
-function isAboutStandalonePage() {
-    return /about\.html$/i.test(window.location.pathname || '');
+function getLoginReturnUrl() {
+    try {
+        const raw = new URLSearchParams(window.location.search).get('return');
+        if (raw && /^(?:[a-z0-9_-]+\.html(?:#[\w-]*)?)$/i.test(raw)) {
+            return raw.startsWith('http') ? 'index.html#home' : raw;
+        }
+    } catch (e) {
+        /* ignore */
+    }
+    return 'index.html#home';
 }
 
 // Login handler (Google Sheets)
@@ -369,14 +395,10 @@ async function handleLogin(event) {
                 savedStocks: data.savedStocks
             });
             closeLoginModal();
-            document.getElementById('loginForm').reset();
+            const lf = document.getElementById('loginForm');
+            if (lf) lf.reset();
             alert('Login successful!');
-            if (isAboutStandalonePage()) {
-                window.location.href = 'index.html#home';
-            } else {
-                showPage('home');
-                window.scrollTo(0, 0);
-            }
+            window.location.href = getLoginReturnUrl();
         } else {
             alert(data.message || 'Login failed!');
         }
@@ -417,14 +439,10 @@ async function handleSignup(event) {
                 savedStocks: data.savedStocks
             });
             closeSignupModal();
-            document.getElementById('signupForm').reset();
+            const sf = document.getElementById('signupForm');
+            if (sf) sf.reset();
             alert('Signup successful!');
-            if (isAboutStandalonePage()) {
-                window.location.href = 'index.html#home';
-            } else {
-                showPage('home');
-                window.scrollTo(0, 0);
-            }
+            window.location.href = getLoginReturnUrl();
         } else {
             alert(data.message || 'Signup failed!');
         }
@@ -440,7 +458,7 @@ async function handleSignup(event) {
 async function addToPortfolio(symbol) {
     if (!sessionManager.isLoggedIn()) {
         alert('Please login to add stocks to your portfolio!');
-        openLoginModal();
+        window.location.href = 'login.html?return=stocks.html';
         return;
     }
 
@@ -477,19 +495,32 @@ async function addToPortfolio(symbol) {
 // ===== LOGIN/SIGNUP MODALS =====
 
 function openLoginModal() {
-    document.getElementById('loginModal').style.display = 'block';
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.style.display = 'block';
+        return;
+    }
+    window.location.href = 'login.html';
 }
 
 function closeLoginModal() {
-    document.getElementById('loginModal').style.display = 'none';
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.style.display = 'none';
 }
 
 function openSignupModal() {
-    document.getElementById('signupModal').style.display = 'block';
+    const modal = document.getElementById('signupModal');
+    if (modal) {
+        modal.style.display = 'block';
+        return;
+    }
+    const sec = document.getElementById('signup-section');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function closeSignupModal() {
-    document.getElementById('signupModal').style.display = 'none';
+    const modal = document.getElementById('signupModal');
+    if (modal) modal.style.display = 'none';
 }
 
 function switchToSignup() {
@@ -499,6 +530,11 @@ function switchToSignup() {
 
 function switchToLogin() {
     closeSignupModal();
+    const loginSec = document.getElementById('login-section');
+    if (loginSec) {
+        loginSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
     openLoginModal();
 }
 
@@ -540,7 +576,7 @@ function fillStocksGrid(grid) {
 
 // ===== SPA NAVIGATION (navbar + full-page views) =====
 
-const SPA_ROUTE_IDS = ['home', 'stocks', 'analyse', 'premium'];
+const SPA_ROUTE_IDS = ['home'];
 
 function showPage(page) {
     document.querySelectorAll('.page-section').forEach(el => {
@@ -557,27 +593,25 @@ function showPage(page) {
         return;
     }
 
-    const mainEl = document.querySelector('main');
-    if (mainEl) mainEl.style.display = 'none';
-    document.querySelectorAll('main > section').forEach(sec => {
-        sec.style.display = 'none';
-    });
-
-    const pageEl = document.getElementById(page + 'Page');
-    if (!pageEl) {
-        if (mainEl) mainEl.style.display = '';
+    if (page === 'logout') {
+        const mainEl = document.querySelector('main');
+        if (mainEl) mainEl.style.display = 'none';
         document.querySelectorAll('main > section').forEach(sec => {
-            sec.style.display = '';
+            sec.style.display = 'none';
         });
+        const lp = document.getElementById('logoutPage');
+        if (lp) {
+            lp.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
         return;
     }
 
-    pageEl.style.display = 'block';
-    window.scrollTo(0, 0);
-
-    if (page === 'stocks') {
-        fillStocksGrid(document.getElementById('stocksGridPage'));
-    }
+    const mainEl = document.querySelector('main');
+    if (mainEl) mainEl.style.display = '';
+    document.querySelectorAll('main > section').forEach(sec => {
+        sec.style.display = '';
+    });
 }
 
 function logout() {
@@ -756,19 +790,48 @@ function initFinBot() {
     });
 }
 
+function initProfilePage() {
+    const form = document.getElementById('profileForm');
+    if (!form || form.dataset.profileBound === '1') return;
+
+    if (!sessionManager.isLoggedIn()) {
+        window.location.replace('login.html?return=profile.html');
+        return;
+    }
+
+    const user = sessionManager.getSession();
+    const nameEl = document.getElementById('profileDisplayName');
+    const emailEl = document.getElementById('profileDisplayEmail');
+    const idEl = document.getElementById('profileDisplayId');
+    const dobEl = document.getElementById('profileDob');
+    const planEl = document.getElementById('profilePlan');
+
+    if (nameEl) nameEl.textContent = user.name || '—';
+    if (emailEl) emailEl.textContent = user.email || '—';
+    if (idEl) idEl.textContent = user.id != null ? String(user.id) : '—';
+    if (dobEl) dobEl.value = user.dateOfBirth || '';
+    if (planEl) planEl.value = user.plan || 'free';
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const dob = dobEl ? dobEl.value : '';
+        const plan = planEl ? planEl.value : '';
+        sessionManager.saveSession({
+            ...sessionManager.getSession(),
+            dateOfBirth: dob,
+            plan
+        });
+        alert('Your profile has been updated.');
+    });
+    form.dataset.profileBound = '1';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     populateStocks();
     sessionManager.loadSession();
     applyInitialHashRoute();
     initFinBot();
-
-    const loginLink = document.querySelector('.login-btn');
-    if (loginLink) {
-        loginLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            openLoginModal();
-        });
-    }
+    initProfilePage();
 
     // Hash links: SPA routes vs in-page scroll targets
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

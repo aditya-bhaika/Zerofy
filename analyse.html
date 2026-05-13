@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us — ZEROFY</title>
+    <title>Market Analysis — ZEROFY</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -16,21 +16,11 @@
                 <span class="logo-subtitle">Stock Analysis Hub</span>
             </div>
             <ul class="nav-menu" id="navMenu">
-                <li class="nav-item">
-                    <a href="index.html#home" class="nav-link">Home Page</a>
-                </li>
-                <li class="nav-item">
-                    <a href="about.html" class="nav-link" aria-current="page">About Us</a>
-                </li>
-                <li class="nav-item">
-                    <a href="stocks.html" class="nav-link">Stocks</a>
-                </li>
-                <li class="nav-item">
-                    <a href="analyse.html" class="nav-link">Analyse</a>
-                </li>
-                <li class="nav-item">
-                    <a href="premium.html" class="nav-link">Premium</a>
-                </li>
+                <li class="nav-item"><a href="index.html#home" class="nav-link">Home Page</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="stocks.html" class="nav-link">Stocks</a></li>
+                <li class="nav-item"><a href="analyse.html" class="nav-link" aria-current="page">Analyse</a></li>
+                <li class="nav-item"><a href="premium.html" class="nav-link">Premium</a></li>
                 <li class="nav-item" id="profileNavItem" style="display: none;">
                     <a href="profile.html" class="nav-link">Profile</a>
                 </li>
@@ -43,9 +33,7 @@
                 </li>
             </ul>
             <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
         </div>
         <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
@@ -54,47 +42,24 @@
     <canvas id="stockBackground"></canvas>
 
     <main>
-        <section class="section hero-section about-hero-page">
-            <div class="hero-content">
-                <h1>About ZEROFY</h1>
-                <p class="hero-subtitle">An endeavour by Divine Enterprise — making stock market analysis clear, modern, and approachable.</p>
-                <a href="index.html#home" class="cta-button">Back to Home</a>
-            </div>
-        </section>
-
-        <section class="section about-section about-founders-section">
-            <h2>Meet Our Co-Founders</h2>
-            <p class="about-page-intro">
-                ZEROFY was built by two operators who care about transparency in markets: one from quantitative research and product,
-                the other from investor education and design. Together they focus on tools that explain <em>why</em> prices move — not just <em>what</em> the tick says.
-            </p>
-
-            <div class="floaters-container floaters-container--founders">
-                <article class="floater floater-1 floater-founder">
-                    <div class="founder-photo-wrap">
-                        <img class="founder-photo" src=""
-                            alt="Portrait of Aditya Bhaika, Co-founder" width="320" height="320" loading="lazy">
-                    </div>
-                    <span class="founder-role">Co-founder &amp; Head of Research</span>
-                    <h3>Aditya Bhaika</h3>
-                    <p>
-                        Aditya leads ZEROFY’s Computational direction: screening logic, factor-style views, and how we translate noisy market data into calm, readable takeaways.
-                        Previously he built analytics dashboards for retail investors and mentored university trading clubs on risk-aware position sizing.
-                    </p>
-                </article>
-
-                <article class="floater floater-2 floater-founder">
-                    <div class="founder-photo-wrap">
-                        <img class="founder-photo" src=""
-                            alt="Portrait of Kavya Nair, Co-founder" width="320" height="320" loading="lazy">
-                    </div>
-                    <span class="founder-role">Co-founder &amp; Head of Product</span>
-                    <h3>Anonymous</h3>
-                    <p>
-                        Anonymous shapes the ZEROFY experience end-to-end — from onboarding flows to the FinBot assistant and premium education tracks.
-                        He believes great analysis should feel like a conversation: structured, jargon-light, and respectful of every skill level.
-                    </p>
-                </article>
+        <section class="section analyse-section">
+            <h2>Market Analysis Tools</h2>
+            <div class="analysis-tools">
+                <div class="tool-card">
+                    <h3>Stock Screener</h3>
+                    <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
+                    <button type="button" class="tool-btn">Open Screener</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Portfolio Tracker</h3>
+                    <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
+                    <button type="button" class="tool-btn">View Portfolio</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Market News</h3>
+                    <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
+                    <button type="button" class="tool-btn">Read News</button>
+                </div>
             </div>
         </section>
     </main>

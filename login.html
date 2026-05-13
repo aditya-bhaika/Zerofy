@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — ZEROFY</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="auth-page">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a href="index.html#home">ZEROFY</a>
+                <span class="logo-subtitle">Stock Analysis Hub</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="index.html#home" class="nav-link">Home Page</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="stocks.html" class="nav-link">Stocks</a></li>
+                <li class="nav-item"><a href="analyse.html" class="nav-link">Analyse</a></li>
+                <li class="nav-item"><a href="premium.html" class="nav-link">Premium</a></li>
+                <li class="nav-item" id="profileNavItem" style="display: none;">
+                    <a href="profile.html" class="nav-link">Profile</a>
+                </li>
+                <li class="nav-item" id="loginItem">
+                    <a href="login.html" class="nav-link login-btn" aria-current="page">Login</a>
+                </li>
+                <li class="nav-item" id="userProfile" style="display: none;">
+                    <span class="user-welcome">Welcome, <span id="userName">User</span></span>
+                    <button type="button" class="logout-btn" onclick="logout()">Logout</button>
+                </li>
+            </ul>
+            <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+    </nav>
+
+    <main class="auth-main">
+        <section id="login-section" class="section" style="min-height: auto; padding: 0;">
+            <div class="modal-content auth-panel">
+                <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;">Login to ZEROFY</h2>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                    <p class="switch-form">Don't have an account? <a href="#signup-section" onclick="switchToSignup(); return false;">Sign Up</a></p>
+                </form>
+            </div>
+        </section>
+
+        <section id="signup-section" class="section" style="min-height: auto; padding: 0;">
+            <div class="modal-content auth-panel">
+                <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;">Create Account</h2>
+                <form id="signupForm" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName">Full Name:</label>
+                        <input type="text" id="signupName" name="name" required autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email:</label>
+                        <input type="email" id="signupEmail" name="email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password:</label>
+                        <input type="password" id="signupPassword" name="password" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="submit-btn">Sign Up</button>
+                    <p class="switch-form">Already have an account? <a href="#login-section" onclick="switchToLogin(); return false;">Login</a></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ZEROFY</h4>
+                <p>Making stock market analysis simple and accessible for everyone. An Endeavour by Divine Enterprise</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="stocks.html">Stocks</a></li>
+                    <li><a href="analyse.html">Analyse</a></li>
+                    <li><a href="premium.html">Premium</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p class="footer-contact-item"><span>Phone</span><a href="tel:+917605860666">+91 7605860666</a></p>
+                <p class="footer-contact-item"><span>Mail</span><a href="mailto:info@zerofy.com">info@zerofy.com</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on Instagram"><span class="social-icon">IG</span>Instagram</a>
+                    <a href="" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on Facebook"><span class="social-icon">f</span>Facebook</a>
+                    <a href="" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on LinkedIn"><span class="social-icon">in</span>LinkedIn</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ZEROFY. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
