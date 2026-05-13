@@ -1,5 +1,7 @@
 # ZEROFY - Stock Market Analysis Website
 
+Stock market analysis firm.
+
 ## 🚀 Overview
 
 ZEROFY is a professional, interactive stock market analysis website designed to make stock market investing simple and accessible to everyone, especially youth. The website features a modern black and white theme with interactive elements, real-time stock tracking, and user authentication.
