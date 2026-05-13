@@ -89,7 +89,15 @@ qq/
 ## 🔐 User Authentication
 
 ### Database System
-The website uses **localStorage** to store user data locally. For production, consider integrating:
+The website uses a **Google Sheets backend** through Google Apps Script for user data and portfolio updates.
+
+Configured endpoint:
+
+```javascript
+https://script.google.com/macros/s/AKfycbyvO2TBg3mfDiDeo58VeiB0m8NDBN8jJiUguRaXHRg72XZvgg0Y63hvbtpy47_TuQjT/exec
+```
+
+For production, consider migrating sensitive authentication data to:
 - Firebase Realtime Database
 - MongoDB
 - AWS DynamoDB
@@ -97,13 +105,11 @@ The website uses **localStorage** to store user data locally. For production, co
 
 ### Current Implementation
 ```javascript
-// User data stored in localStorage
+// User data returned by Google Sheets backend and cached in sessionStorage
 {
-  id: timestamp,
+  id: "backend_user_id",
   name: "User Name",
   email: "user@example.com",
-  password: "hashed_password",
-  createdAt: "ISO date",
   portfolio: [],
   savedStocks: []
 }
@@ -268,7 +274,8 @@ For production:
 - Clear browser cache
 
 ### Login not working?
-- Check if localStorage is enabled
+- Check if sessionStorage is enabled
+- Confirm the Google Apps Script deployment is active and shared with "Anyone"
 - Try clearing browser data
 - Verify email format is valid
 

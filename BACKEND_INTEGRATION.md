@@ -78,6 +78,24 @@ function doPost(e) {
 
 ---
 
+### Active Frontend Integration
+
+The frontend is configured to use this deployed Google Apps Script web app:
+
+```javascript
+const SHEETS_API = 'https://script.google.com/macros/s/AKfycbyvO2TBg3mfDiDeo58VeiB0m8NDBN8jJiUguRaXHRg72XZvgg0Y63hvbtpy47_TuQjT/exec';
+```
+
+`script.js` sends `signup`, `login`, and `addPortfolio` actions to the web app. Requests use a JSON body with a `text/plain;charset=utf-8` content type, which keeps browser calls compatible with Google Apps Script web app CORS behavior.
+
+Expected backend actions:
+
+- `signup`: creates a user and returns `{ success: true, id, name, email }`
+- `login`: validates a user and returns `{ success: true, id, name, email, portfolio, savedStocks }`
+- `addPortfolio`: stores a selected stock and returns `{ success: true, portfolio }`
+
+---
+
 ### Step 3: Update Frontend (`script.js`)
 
 Replace backend calls with fetches to your Apps Script URL:

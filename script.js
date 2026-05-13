@@ -132,6 +132,45 @@ animateBackground();
 
 const SHEETS_API = 'https://script.google.com/macros/s/AKfycbyvO2TBg3mfDiDeo58VeiB0m8NDBN8jJiUguRaXHRg72XZvgg0Y63hvbtpy47_TuQjT/exec';
 
+function normalizePortfolio(portfolio) {
+    if (Array.isArray(portfolio)) return portfolio;
+    if (!portfolio) return [];
+
+    try {
+        const parsed = typeof portfolio === 'string' ? JSON.parse(portfolio) : portfolio;
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        console.warn('Unable to parse portfolio from backend:', error);
+        return [];
+    }
+}
+
+async function postToSheets(action, payload = {}) {
+    const response = await fetch(SHEETS_API, {
+        method: 'POST',
+        headers: {
+            // Avoids an Apps Script CORS preflight while still sending JSON.
+            'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({ action, ...payload })
+    });
+
+    const rawText = await response.text();
+    let data;
+
+    try {
+        data = rawText ? JSON.parse(rawText) : {};
+    } catch (error) {
+        throw new Error('Google Sheets returned an invalid response.');
+    }
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Google Sheets request failed.');
+    }
+
+    return data;
+}
+
 // ===== USER AUTHENTICATION & DATABASE =====
 
 // Session management
@@ -141,16 +180,30 @@ class SessionManager {
     }
 
     saveSession(user) {
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUser = user;
+        const normalizedUser = {
+            ...user,
+            portfolio: normalizePortfolio(user.portfolio),
+            savedStocks: normalizePortfolio(user.savedStocks)
+        };
+
+        sessionStorage.setItem('currentUser', JSON.stringify(normalizedUser));
+        this.currentUser = normalizedUser;
         this.updateUI();
     }
 
     loadSession() {
         const stored = sessionStorage.getItem('currentUser');
         if (stored) {
-            this.updateUI();
-            return JSON.parse(stored);
+            try {
+                this.currentUser = JSON.parse(stored);
+                this.currentUser.portfolio = normalizePortfolio(this.currentUser.portfolio);
+                this.currentUser.savedStocks = normalizePortfolio(this.currentUser.savedStocks);
+                this.updateUI();
+                return this.currentUser;
+            } catch (error) {
+                console.warn('Clearing invalid saved session:', error);
+                sessionStorage.removeItem('currentUser');
+            }
         }
         return null;
     }
@@ -179,7 +232,7 @@ class SessionManager {
             userProfile.style.display = 'flex';
             userProfile.style.gap = '1rem';
             userProfile.style.alignItems = 'center';
-            userName.textContent = this.currentUser.name.split(' ')[0];
+            userName.textContent = (this.currentUser.name || this.currentUser.email || 'User').split(' ')[0];
         } else {
             loginItem.style.display = 'block';
             userProfile.style.display = 'none';
@@ -190,60 +243,84 @@ class SessionManager {
 const sessionManager = new SessionManager();
 
 // Login handler (Google Sheets)
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const submitButton = event.target.querySelector('button[type="submit"]');
 
-    fetch(SHEETS_API, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'login', email, password })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                sessionManager.saveSession({ id: data.id, name: data.name, email: data.email, portfolio: [], savedStocks: [] });
-                closeLoginModal();
-                document.getElementById('loginForm').reset();
-                alert('Login successful!');
-            } else {
-                alert(data.message || 'Login failed!');
-            }
-        })
-        .catch(() => alert('Network error. Please try again.'));
+    submitButton.disabled = true;
+    submitButton.textContent = 'Logging in...';
+
+    try {
+        const data = await postToSheets('login', { email, password });
+
+        if (data.success) {
+            sessionManager.saveSession({
+                id: data.id,
+                name: data.name,
+                email: data.email || email,
+                portfolio: data.portfolio,
+                savedStocks: data.savedStocks
+            });
+            closeLoginModal();
+            document.getElementById('loginForm').reset();
+            alert('Login successful!');
+        } else {
+            alert(data.message || 'Login failed!');
+        }
+    } catch (error) {
+        console.error('Login failed:', error);
+        alert(error.message || 'Network error. Please try again.');
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Login';
+    }
 }
 
 // Signup handler (Google Sheets)
-function handleSignup(event) {
+async function handleSignup(event) {
     event.preventDefault();
     const name = document.getElementById('signupName').value;
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
+    const submitButton = event.target.querySelector('button[type="submit"]');
 
     if (password.length < 6) {
         alert('Password must be at least 6 characters long!');
         return;
     }
 
-    fetch(SHEETS_API, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'signup', name, email, password })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                sessionManager.saveSession({ id: data.id, name, email, portfolio: [], savedStocks: [] });
-                closeSignupModal();
-                document.getElementById('signupForm').reset();
-                alert('Signup successful!');
-            } else {
-                alert(data.message || 'Signup failed!');
-            }
-        })
-        .catch(() => alert('Network error. Please try again.'));
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating...';
+
+    try {
+        const data = await postToSheets('signup', { name, email, password });
+
+        if (data.success) {
+            sessionManager.saveSession({
+                id: data.id,
+                name: data.name || name,
+                email: data.email || email,
+                portfolio: data.portfolio,
+                savedStocks: data.savedStocks
+            });
+            closeSignupModal();
+            document.getElementById('signupForm').reset();
+            alert('Signup successful!');
+        } else {
+            alert(data.message || 'Signup failed!');
+        }
+    } catch (error) {
+        console.error('Signup failed:', error);
+        alert(error.message || 'Network error. Please try again.');
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Sign Up';
+    }
 }
 
-function addToPortfolio(symbol) {
+async function addToPortfolio(symbol) {
     if (!sessionManager.isLoggedIn()) {
         alert('Please login to add stocks to your portfolio!');
         openLoginModal();
@@ -259,23 +336,25 @@ function addToPortfolio(symbol) {
         return;
     }
 
-    fetch(SHEETS_API, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'addPortfolio', id: user.id, stock })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Update session portfolio (client-side only)
-                if (!user.portfolio) user.portfolio = [];
+    try {
+        const data = await postToSheets('addPortfolio', { id: user.id, stock });
+
+        if (data.success) {
+            user.portfolio = data.portfolio !== undefined
+                ? normalizePortfolio(data.portfolio)
+                : normalizePortfolio(user.portfolio);
+            if (!user.portfolio.some(s => s.symbol === symbol)) {
                 user.portfolio.push(stock);
-                sessionManager.saveSession(user);
-                alert(`${symbol} added to your portfolio!`);
-            } else {
-                alert(data.message || 'Failed to add stock!');
             }
-        })
-        .catch(() => alert('Network error. Please try again.'));
+            sessionManager.saveSession(user);
+            alert(`${symbol} added to your portfolio!`);
+        } else {
+            alert(data.message || 'Failed to add stock!');
+        }
+    } catch (error) {
+        console.error('Portfolio update failed:', error);
+        alert(error.message || 'Network error. Please try again.');
+    }
 }
 
 // ===== LOGIN/SIGNUP MODALS =====
