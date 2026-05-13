@@ -131,6 +131,7 @@ animateBackground();
 // ===== GOOGLE SHEETS BACKEND INTEGRATION =====
 
 const SHEETS_API = 'https://script.google.com/macros/s/AKfycbyvO2TBg3mfDiDeo58VeiB0m8NDBN8jJiUguRaXHRg72XZvgg0Y63hvbtpy47_TuQjT/exec';
+const BACKEND_ACCESS_ERROR = 'Signup is blocked because the Google Sheets backend is not public yet. In Apps Script, deploy the web app with "Execute as: Me" and "Who has access: Anyone", then use the latest /exec URL.';
 
 function normalizePortfolio(portfolio) {
     if (Array.isArray(portfolio)) return portfolio;
@@ -146,20 +147,30 @@ function normalizePortfolio(portfolio) {
 }
 
 async function postToSheets(action, payload = {}) {
-    const response = await fetch(SHEETS_API, {
-        method: 'POST',
-        headers: {
-            // Avoids an Apps Script CORS preflight while still sending JSON.
-            'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify({ action, ...payload })
-    });
+    let response;
+
+    try {
+        response = await fetch(SHEETS_API, {
+            method: 'POST',
+            headers: {
+                // Avoids an Apps Script CORS preflight while still sending JSON.
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({ action, ...payload })
+        });
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error(BACKEND_ACCESS_ERROR);
+        }
+
+        throw error;
+    }
 
     const rawText = await response.text();
     let data;
 
     if (response.status === 401 || response.status === 403) {
-        throw new Error('Google Sheets backend is not public. Redeploy the Apps Script web app with access set to "Anyone".');
+        throw new Error(BACKEND_ACCESS_ERROR);
     }
 
     try {

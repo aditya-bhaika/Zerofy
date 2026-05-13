@@ -73,8 +73,11 @@ function doPost(e) {
 3. Save and **Deploy**:
    - Click **Deploy > New deployment**
    - Select **Web app**
-   - Set access to **Anyone**
+   - Set **Execute as** to **Me**
+   - Set **Who has access** to **Anyone**
    - Copy the Web App URL (e.g., `https://script.google.com/macros/s/AKfy.../exec`)
+
+If signup shows `Failed to fetch` or a backend access warning, the web app is still private or the frontend is using an old deployment URL. Create a new deployment, confirm **Who has access: Anyone**, then copy the latest `/exec` URL into `SHEETS_API`.
 
 ---
 
