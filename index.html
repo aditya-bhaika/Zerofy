@@ -296,6 +296,85 @@
         </section>
     </main>
 
+    <!-- SPA views (same content as in-page sections; shown when nav uses showPage) -->
+    <div id="stocksPage" class="page-section" style="display:none;">
+        <section class="section">
+            <h2>Trending Stocks</h2>
+            <div class="stocks-grid" id="stocksGridPage"></div>
+        </section>
+    </div>
+    <div id="analysePage" class="page-section" style="display:none;">
+        <section class="section">
+            <h2>Market Analysis Tools</h2>
+            <div class="analysis-tools">
+                <div class="tool-card">
+                    <h3>Stock Screener</h3>
+                    <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
+                    <button class="tool-btn">Open Screener</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Portfolio Tracker</h3>
+                    <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
+                    <button class="tool-btn">View Portfolio</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Market News</h3>
+                    <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
+                    <button class="tool-btn">Read News</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div id="premiumPage" class="page-section" style="display:none;">
+        <section class="section">
+            <h2>Upgrade to Premium</h2>
+            <div class="premium-cards">
+                <div class="premium-card basic">
+                    <h3>Free Plan</h3>
+                    <p class="price">$0</p>
+                    <ul class="features-list">
+                        <li>✓ Real-time stock quotes</li>
+                        <li>✓ Basic analysis tools</li>
+                        <li>✓ Portfolio tracking</li>
+                        <li>✗ Advanced analytics</li>
+                        <li>✗ Premium support</li>
+                    </ul>
+                    <button class="premium-btn">Current Plan</button>
+                </div>
+                <div class="premium-card pro">
+                    <h3>Pro Plan</h3>
+                    <p class="price">$29<span>/month</span></p>
+                    <ul class="features-list">
+                        <li>✓ Real-time stock quotes</li>
+                        <li>✓ Advanced analytics</li>
+                        <li>✓ Portfolio tracking</li>
+                        <li>✓ Expert insights</li>
+                        <li>✗ Premium support</li>
+                    </ul>
+                    <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
+                </div>
+                <div class="premium-card elite">
+                    <h3>Elite Plan</h3>
+                    <p class="price">$99<span>/month</span></p>
+                    <ul class="features-list">
+                        <li>✓ Real-time stock quotes</li>
+                        <li>✓ Advanced analytics</li>
+                        <li>✓ Portfolio tracking</li>
+                        <li>✓ Expert insights</li>
+                        <li>✓ 24/7 Premium support</li>
+                    </ul>
+                    <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div id="logoutPage" class="page-section" style="display:none;">
+        <section class="section">
+            <h2>You have been logged out.</h2>
+            <p>Thank you for using ZEROFY. <a href="#home">Return to Home</a></p>
+        </section>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -334,148 +413,3 @@
 </body>
 
 </html>
-
-<!-- ========== PAGE TEMPLATES FOR NAVBAR CATEGORIES ========== -->
-<!-- Home Page (already in #home section) -->
-<!-- Stocks Page -->
-<div id="stocksPage" class="page-section" style="display:none;">
-    <section class="section">
-        <h2>Trending Stocks</h2>
-        <div class="stocks-grid" id="stocksGridPage"></div>
-    </section>
-</div>
-<!-- Analyse Page -->
-<div id="analysePage" class="page-section" style="display:none;">
-    <section class="section">
-        <h2>Market Analysis Tools</h2>
-        <div class="analysis-tools">
-            <div class="tool-card">
-                <h3>Stock Screener</h3>
-                <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                <button class="tool-btn">Open Screener</button>
-            </div>
-            <div class="tool-card">
-                <h3>Portfolio Tracker</h3>
-                <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                <button class="tool-btn">View Portfolio</button>
-            </div>
-            <div class="tool-card">
-                <h3>Market News</h3>
-                <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                <button class="tool-btn">Read News</button>
-            </div>
-        </div>
-    </section>
-</div>
-<!-- Premium Page -->
-<div id="premiumPage" class="page-section" style="display:none;">
-    <section class="section">
-        <h2>Upgrade to Premium</h2>
-        <div class="premium-cards">
-            <div class="premium-card basic">
-                <h3>Free Plan</h3>
-                <p class="price">$0</p>
-                <ul class="features-list">
-                    <li>✓ Real-time stock quotes</li>
-                    <li>✓ Basic analysis tools</li>
-                    <li>✓ Portfolio tracking</li>
-                    <li>✗ Advanced analytics</li>
-                    <li>✗ Premium support</li>
-                </ul>
-                <button class="premium-btn">Current Plan</button>
-            </div>
-            <div class="premium-card pro">
-                <h3>Pro Plan</h3>
-                <p class="price">$29<span>/month</span></p>
-                <ul class="features-list">
-                    <li>✓ Real-time stock quotes</li>
-                    <li>✓ Advanced analytics</li>
-                    <li>✓ Portfolio tracking</li>
-                    <li>✓ Expert insights</li>
-                    <li>✗ Premium support</li>
-                </ul>
-                <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
-            </div>
-            <div class="premium-card elite">
-                <h3>Elite Plan</h3>
-                <p class="price">$99<span>/month</span></p>
-                <ul class="features-list">
-                    <li>✓ Real-time stock quotes</li>
-                    <li>✓ Advanced analytics</li>
-                    <li>✓ Portfolio tracking</li>
-                    <li>✓ Expert insights</li>
-                    <li>✓ 24/7 Premium support</li>
-                </ul>
-                <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
-            </div>
-        </div>
-    </section>
-</div>
-<!-- Logout Page -->
-<div id="logoutPage" class="page-section" style="display:none;">
-    <section class="section">
-        <h2>You have been logged out.</h2>
-        <p>Thank you for using ZEROFY. <a href="#home" onclick="showPage('home')">Return to Home</a></p>
-    </section>
-</div>
-<!-- ========== END PAGE TEMPLATES ========== -->
-
-<script>
-    // SPA-like navigation for navbar
-    function showPage(page) {
-        // Hide all page sections
-        document.querySelectorAll('.page-section').forEach(sec => sec.style.display = 'none');
-        // Hide main content sections
-        document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
-        // Show selected page
-        if (page === 'home') {
-            document.querySelector('main').style.display = '';
-            document.getElementById('home').style.display = '';
-            document.getElementById('about').style.display = '';
-            document.getElementById('how-it-works').style.display = '';
-            document.getElementById('commodities').style.display = '';
-        } else {
-            document.querySelector('main').style.display = 'none';
-            document.getElementById(page + 'Page').style.display = 'block';
-            // Populate stocks grid if stocks page
-            if (page === 'stocks') {
-                document.getElementById('stocksGridPage').innerHTML = '';
-                if (typeof stocksData !== 'undefined') {
-                    stocksData.forEach(stock => {
-                        const isPositive = stock.change >= 0;
-                        const stockCard = document.createElement('div');
-                        stockCard.className = 'stock-card';
-                        stockCard.innerHTML = `
-                        <div class="stock-symbol">${stock.symbol}</div>
-                        <div class="stock-name">${stock.name}</div>
-                        <div class="stock-price">$${stock.price.toFixed(2)}</div>
-                        <div class="stock-change ${isPositive ? 'positive' : 'negative'}">
-                            ${isPositive ? '▲' : '▼'} ${Math.abs(stock.change).toFixed(2)} (${stock.changePercent.toFixed(2)}%)
-                        </div>
-                        <button class="stock-btn" onclick="addToPortfolio('${stock.symbol}')">Add to Portfolio</button>
-                    `;
-                        document.getElementById('stocksGridPage').appendChild(stockCard);
-                    });
-                }
-            }
-        }
-    }
-
-    // Navbar link event listeners
-    ['home', 'stocks', 'analyse', 'premium'].forEach(page => {
-        document.querySelectorAll(`a[href="#${page}"]`).forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                showPage(page);
-            });
-        });
-    });
-
-    // Logout button handler
-    function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-            sessionManager.logout();
-            showPage('logout');
-        }
-    }
-</script>

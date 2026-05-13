@@ -280,6 +280,8 @@ async function handleLogin(event) {
             });
             closeLoginModal();
             document.getElementById('loginForm').reset();
+            showPage('home');
+            window.scrollTo(0, 0);
             alert('Login successful!');
         } else {
             alert(data.message || 'Login failed!');
@@ -322,6 +324,8 @@ async function handleSignup(event) {
             });
             closeSignupModal();
             document.getElementById('signupForm').reset();
+            showPage('home');
+            window.scrollTo(0, 0);
             alert('Signup successful!');
         } else {
             alert(data.message || 'Signup failed!');
@@ -415,11 +419,9 @@ const stocksData = [
     { symbol: 'V', name: 'Visa Inc.', price: 265.30, change: 3.50, changePercent: 1.33 }
 ];
 
-// ===== POPULATE STOCKS SECTION =====
-
-function populateStocks() {
-    const stocksGrid = document.getElementById('stocksGrid');
-    stocksGrid.innerHTML = '';
+function fillStocksGrid(grid) {
+    if (!grid) return;
+    grid.innerHTML = '';
 
     stocksData.forEach(stock => {
         const isPositive = stock.change >= 0;
@@ -434,8 +436,63 @@ function populateStocks() {
             </div>
             <button class="stock-btn" onclick="addToPortfolio('${stock.symbol}')">Add to Portfolio</button>
         `;
-        stocksGrid.appendChild(stockCard);
+        grid.appendChild(stockCard);
     });
+}
+
+// ===== SPA NAVIGATION (navbar + full-page views) =====
+
+const SPA_ROUTE_IDS = ['home', 'stocks', 'analyse', 'premium'];
+
+function showPage(page) {
+    document.querySelectorAll('.page-section').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    if (page === 'home') {
+        const mainEl = document.querySelector('main');
+        if (mainEl) mainEl.style.display = '';
+        document.querySelectorAll('main > section').forEach(sec => {
+            sec.style.display = '';
+        });
+        window.scrollTo(0, 0);
+        return;
+    }
+
+    const mainEl = document.querySelector('main');
+    if (mainEl) mainEl.style.display = 'none';
+    document.querySelectorAll('main > section').forEach(sec => {
+        sec.style.display = 'none';
+    });
+
+    const pageEl = document.getElementById(page + 'Page');
+    if (!pageEl) {
+        if (mainEl) mainEl.style.display = '';
+        document.querySelectorAll('main > section').forEach(sec => {
+            sec.style.display = '';
+        });
+        return;
+    }
+
+    pageEl.style.display = 'block';
+    window.scrollTo(0, 0);
+
+    if (page === 'stocks') {
+        fillStocksGrid(document.getElementById('stocksGridPage'));
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        sessionManager.logout();
+        showPage('logout');
+    }
+}
+
+// ===== POPULATE STOCKS SECTION =====
+
+function populateStocks() {
+    fillStocksGrid(document.getElementById('stocksGrid'));
 }
 
 // ===== SMOOTH SCROLLING =====
@@ -477,11 +534,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Smooth scroll for navigation links
+    // Hash links: SPA routes vs in-page scroll targets
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (!href || href.length < 2) return;
+
+            const id = href.slice(1);
+
+            if (SPA_ROUTE_IDS.includes(id)) {
+                e.preventDefault();
+                showPage(id);
+                return;
+            }
+
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
+            const target = document.querySelector(href);
             if (target) {
                 target.scrollIntoView({
                     behavior: 'smooth',

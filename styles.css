@@ -952,6 +952,8 @@ main {
    ===================================================== */
 
 .footer {
+    position: relative;
+    z-index: 2;
     background: var(--primary-color);
     color: var(--secondary-color);
     padding: 3rem 2rem 1rem;
@@ -1245,4 +1247,20 @@ main {
 .py-5 {
     padding-top: 5rem;
     padding-bottom: 5rem;
+}
+
+/* =====================================================
+   SPA PAGE SECTIONS (navbar sub-views)
+   ===================================================== */
+
+.page-section {
+    position: relative;
+    z-index: 2;
+    margin-top: 70px;
+    min-height: calc(100vh - 70px);
+    padding-bottom: 2rem;
+}
+
+.page-section .section {
+    min-height: auto;
 }
