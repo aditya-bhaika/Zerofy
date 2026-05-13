@@ -20,16 +20,12 @@
                 <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
                 <li class="nav-item"><a href="stocks.html" class="nav-link">Stocks</a></li>
                 <li class="nav-item"><a href="analyse.html" class="nav-link">Analyse</a></li>
-                <li class="nav-item"><a href="premium.html" class="nav-link">Premium</a></li>
+                <li class="nav-item" id="premiumNavItem"><a href="premium.html" class="nav-link">Premium</a></li>
                 <li class="nav-item" id="profileNavItem" style="display: none;">
                     <a href="profile.html" class="nav-link" aria-current="page">Profile</a>
                 </li>
                 <li class="nav-item" id="loginItem">
                     <a href="login.html" class="nav-link login-btn">Login</a>
-                </li>
-                <li class="nav-item" id="userProfile" style="display: none;">
-                    <span class="user-welcome">Welcome, <span id="userName">User</span></span>
-                    <button type="button" class="logout-btn" onclick="logout()">Logout</button>
                 </li>
             </ul>
             <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
@@ -47,6 +43,16 @@
             <p style="text-align: center; color: rgba(255,255,255,0.75); max-width: 520px; margin: -2rem auto 2rem;">
                 View your account details and add extra information (date of birth and your current ZEROFY plan). This is stored in your browser session for this visit.
             </p>
+            <div class="profile-plan-floater floater animate-on-scroll">
+                <div class="floater-icon">💳</div>
+                <h3>Your current plan</h3>
+                <p>Active plan: <strong id="profileCurrentPlan">Free</strong></p>
+                <p>Upgrade or top up to access premium tools, deeper analysis, and faster market signals.</p>
+                <div class="profile-plan-actions">
+                    <a href="premium.html" class="cta-button profile-topup-btn">Top Up</a>
+                    <button type="button" class="logout-btn profile-logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
             <div class="modal-content auth-panel" style="max-width: 520px;">
                 <h3 style="color: var(--secondary-color); margin-bottom: 1rem; font-size: 1.1rem;">Account</h3>
                 <div class="profile-readonly"><span>Name</span><strong id="profileDisplayName">—</strong></div>

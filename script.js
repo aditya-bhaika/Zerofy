@@ -196,8 +196,7 @@
             pointerIdleTimer = window.setTimeout(() => {
                 pointer.active = false;
             }, 2200);
-        },
-        { passive: true }
+        }, { passive: true }
     );
 
     window.addEventListener('blur', () => {
@@ -287,7 +286,7 @@ class SessionManager {
         } catch (e) {
             prev = {};
         }
-        const merged = { ...prev, ...user };
+        const merged = {...prev, ...user };
         const normalizedUser = {
             ...merged,
             portfolio: normalizePortfolio(merged.portfolio),
@@ -337,24 +336,23 @@ class SessionManager {
     updateUI() {
         const loginItem = document.getElementById('loginItem');
         const userProfile = document.getElementById('userProfile');
-        const userName = document.getElementById('userName');
         const profileNavItem = document.getElementById('profileNavItem');
+        const premiumNavItem = document.getElementById('premiumNavItem');
+
+        const hasPremium = this.currentUser && this.currentUser.plan && !['free', 'trial'].includes(String(this.currentUser.plan).toLowerCase());
 
         if (this.currentUser) {
             if (loginItem) loginItem.style.display = 'none';
-            if (userProfile) {
-                userProfile.style.display = 'flex';
-                userProfile.style.gap = '1rem';
-                userProfile.style.alignItems = 'center';
-            }
-            if (userName) {
-                userName.textContent = (this.currentUser.name || this.currentUser.email || 'User').split(' ')[0];
-            }
+            if (userProfile) userProfile.style.display = 'none';
             if (profileNavItem) profileNavItem.style.display = 'list-item';
         } else {
             if (loginItem) loginItem.style.display = 'list-item';
             if (userProfile) userProfile.style.display = 'none';
             if (profileNavItem) profileNavItem.style.display = 'none';
+        }
+
+        if (premiumNavItem) {
+            premiumNavItem.style.display = hasPremium ? 'none' : 'list-item';
         }
     }
 }
@@ -475,9 +473,9 @@ async function addToPortfolio(symbol) {
         const data = await postToSheets('addPortfolio', { id: user.id, stock });
 
         if (data.success) {
-            user.portfolio = data.portfolio !== undefined
-                ? normalizePortfolio(data.portfolio)
-                : normalizePortfolio(user.portfolio);
+            user.portfolio = data.portfolio !== undefined ?
+                normalizePortfolio(data.portfolio) :
+                normalizePortfolio(user.portfolio);
             if (!user.portfolio.some(s => s.symbol === symbol)) {
                 user.portfolio.push(stock);
             }
@@ -624,7 +622,78 @@ function logout() {
     }
 }
 
+function upgradePlan(plan) {
+    if (!sessionManager.isLoggedIn()) {
+        window.location.href = 'login.html?return=premium.html';
+        return;
+    }
+
+    const normalizedPlan = String(plan || 'free').toLowerCase();
+    const current = sessionManager.getSession();
+    const currentPlan = String(current.plan || 'free').toLowerCase();
+
+    if (currentPlan === normalizedPlan) {
+        alert(`You already have the ${normalizedPlan.charAt(0).toUpperCase() + normalizedPlan.slice(1)} plan.`);
+        return;
+    }
+
+    sessionManager.saveSession({
+        ...current,
+        plan: normalizedPlan
+    });
+    applyPremiumPageState();
+    alert(`Your plan has been updated to ${normalizedPlan.charAt(0).toUpperCase() + normalizedPlan.slice(1)}.`);
+}
+
+function applyPremiumPageState() {
+    const user = sessionManager.getSession();
+    const plan = user ? (user.plan || 'free') : 'free';
+    const label = plan === 'free' ? 'Free' : plan.charAt(0).toUpperCase() + plan.slice(1);
+
+    document.querySelectorAll('.current-plan-label').forEach(el => {
+        el.textContent = label;
+    });
+
+    const freeButton = document.getElementById('planFreeBtn');
+    const proButton = document.getElementById('planProBtn');
+    const eliteButton = document.getElementById('planEliteBtn');
+
+    if (freeButton) {
+        freeButton.textContent = plan === 'free' ? 'Current Plan' : 'Choose Free';
+        freeButton.disabled = plan === 'free';
+    }
+    if (proButton) {
+        proButton.textContent = plan === 'pro' ? 'Current Plan' : 'Upgrade Now';
+        proButton.disabled = plan === 'pro';
+    }
+    if (eliteButton) {
+        eliteButton.textContent = plan === 'elite' ? 'Current Plan' : 'Upgrade Now';
+        eliteButton.disabled = plan === 'elite';
+    }
+}
+
+function initScrollAnimations() {
+    const targets = document.querySelectorAll('.animate-on-scroll');
+    if (!targets.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+        targets.forEach(el => el.classList.add('is-visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+        });
+    }, { threshold: 0.15 });
+
+    targets.forEach(el => observer.observe(el));
+}
+
 // ===== POPULATE STOCKS SECTION =====
+
 
 function populateStocks() {
     fillStocksGrid(document.getElementById('stocksGrid'));
@@ -811,6 +880,8 @@ function initProfilePage() {
     if (idEl) idEl.textContent = user.id != null ? String(user.id) : '—';
     if (dobEl) dobEl.value = user.dateOfBirth || '';
     if (planEl) planEl.value = user.plan || 'free';
+    const currentPlanEl = document.getElementById('profileCurrentPlan');
+    if (currentPlanEl) currentPlanEl.textContent = user.plan ? user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Free';
 
     form.addEventListener('submit', e => {
         e.preventDefault();
@@ -821,6 +892,9 @@ function initProfilePage() {
             dateOfBirth: dob,
             plan
         });
+        const currentPlanEl = document.getElementById('profileCurrentPlan');
+        if (currentPlanEl) currentPlanEl.textContent = plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Free';
+        applyPremiumPageState();
         alert('Your profile has been updated.');
     });
     form.dataset.profileBound = '1';
@@ -829,8 +903,10 @@ function initProfilePage() {
 document.addEventListener('DOMContentLoaded', () => {
     populateStocks();
     sessionManager.loadSession();
+    applyPremiumPageState();
     applyInitialHashRoute();
     initFinBot();
+    initScrollAnimations();
     initProfilePage();
 
     // Hash links: SPA routes vs in-page scroll targets

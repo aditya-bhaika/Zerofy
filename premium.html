@@ -20,16 +20,12 @@
                 <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
                 <li class="nav-item"><a href="stocks.html" class="nav-link">Stocks</a></li>
                 <li class="nav-item"><a href="analyse.html" class="nav-link">Analyse</a></li>
-                <li class="nav-item"><a href="premium.html" class="nav-link" aria-current="page">Premium</a></li>
+                <li class="nav-item" id="premiumNavItem"><a href="premium.html" class="nav-link" aria-current="page">Premium</a></li>
                 <li class="nav-item" id="profileNavItem" style="display: none;">
                     <a href="profile.html" class="nav-link">Profile</a>
                 </li>
                 <li class="nav-item" id="loginItem">
                     <a href="login.html" class="nav-link login-btn">Login</a>
-                </li>
-                <li class="nav-item" id="userProfile" style="display: none;">
-                    <span class="user-welcome">Welcome, <span id="userName">User</span></span>
-                    <button type="button" class="logout-btn" onclick="logout()">Logout</button>
                 </li>
             </ul>
             <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
@@ -55,7 +51,7 @@
                         <li>✗ Advanced analytics</li>
                         <li>✗ Premium support</li>
                     </ul>
-                    <button type="button" class="premium-btn">Current Plan</button>
+                    <button id="planFreeBtn" type="button" class="premium-btn" onclick="upgradePlan('free')">Current Plan</button>
                 </div>
                 <div class="premium-card pro">
                     <h3>Pro Plan</h3>
@@ -67,7 +63,7 @@
                         <li>✓ Expert insights</li>
                         <li>✗ Premium support</li>
                     </ul>
-                    <button type="button" class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
+                    <button id="planProBtn" type="button" class="premium-btn" onclick="upgradePlan('pro')">Upgrade Now</button>
                 </div>
                 <div class="premium-card elite">
                     <h3>Elite Plan</h3>
@@ -79,7 +75,7 @@
                         <li>✓ Expert insights</li>
                         <li>✓ 24/7 Premium support</li>
                     </ul>
-                    <button type="button" class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
+                    <button id="planEliteBtn" type="button" class="premium-btn" onclick="upgradePlan('elite')">Upgrade Now</button>
                 </div>
             </div>
         </section>

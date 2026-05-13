@@ -352,7 +352,7 @@ a.cta-button {
     transition: opacity 0.22s ease, visibility 0.22s ease;
 }
 
-.finbot > * {
+.finbot>* {
     pointer-events: auto;
 }
 
@@ -636,7 +636,9 @@ a.cta-button {
     font-size: 0.95rem;
 }
 
+
 /* Co-founder cards (About Us page) */
+
 .floater-founder {
     text-align: center;
     padding-top: 1.75rem;
@@ -1179,6 +1181,134 @@ a.cta-button {
     background: rgba(0, 208, 132, 0.8);
 }
 
+.news-section {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(17, 17, 17, 0.95) 100%);
+    padding: 5rem 2rem;
+}
+
+.news-section h2 {
+    margin-bottom: 1rem;
+    font-size: 2.75rem;
+    color: var(--secondary-color);
+}
+
+.news-intro {
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 760px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.news-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.8rem;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+    transition: var(--transition);
+}
+
+.news-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 208, 132, 0.35);
+}
+
+.news-card h3 {
+    color: var(--secondary-color);
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.news-card p {
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.8;
+}
+
+.news-meta {
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.profile-plan-floater {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 18px;
+    border-left: 4px solid var(--green);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+}
+
+.profile-plan-floater h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+}
+
+.profile-plan-floater p {
+    color: var(--dark-gray);
+    line-height: 1.75;
+    font-size: 0.98rem;
+}
+
+.profile-plan-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.profile-topup-btn {
+    min-width: 160px;
+}
+
+.profile-logout-btn {
+    background: var(--red);
+    color: var(--secondary-color);
+}
+
+.profile-logout-btn:hover {
+    background: rgba(255, 51, 51, 0.85);
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    visibility: hidden;
+    transition: opacity 0.75s ease, transform 0.75s ease;
+}
+
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.commodity-chart.animate-on-scroll .gold-trend,
+.commodity-chart.animate-on-scroll .silver-trend {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    opacity: 0.8;
+}
+
+.commodity-chart.animate-on-scroll.is-visible .gold-trend,
+.commodity-chart.animate-on-scroll.is-visible .silver-trend {
+    animation: lineDraw 1.8s ease forwards;
+}
+
+@keyframes lineDraw {
+    to {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+}
+
 
 /* =====================================================
    MODAL STYLES
@@ -1487,7 +1617,6 @@ a.cta-button {
     .navbar {
         padding: 0.6rem 0;
     }
-
     .navbar-container {
         padding: 0 1rem;
         position: relative;
@@ -1495,17 +1624,14 @@ a.cta-button {
         align-items: center;
         min-height: 52px;
     }
-
     .navbar-logo {
         font-size: 1.45rem;
         line-height: 1.1;
     }
-
     .logo-subtitle {
         font-size: 0.62rem;
         letter-spacing: 1.5px;
     }
-
     .nav-backdrop {
         display: block;
         position: fixed;
@@ -1519,24 +1645,20 @@ a.cta-button {
         pointer-events: none;
         transition: opacity 0.28s ease, visibility 0.28s ease;
     }
-
     body.nav-menu-open .nav-backdrop {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
     }
-
     body.nav-menu-open {
         overflow: hidden;
     }
-
     body.nav-menu-open .finbot {
         visibility: hidden;
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.2s ease, visibility 0.2s ease;
     }
-
     .nav-menu {
         position: fixed;
         top: 0;
@@ -1564,26 +1686,21 @@ a.cta-button {
         z-index: 1001;
         overscroll-behavior: contain;
     }
-
     .nav-menu.active {
         transform: translateX(0);
     }
-
     .nav-item {
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
-
     .nav-item:last-child {
         border-bottom: none;
     }
-
     .nav-link {
         display: block;
         padding: 1rem 1.35rem;
         font-size: 1rem;
         font-weight: 600;
     }
-
     .nav-item .login-btn {
         display: flex;
         align-items: center;
@@ -1593,7 +1710,6 @@ a.cta-button {
         border-radius: 8px;
         font-weight: 700;
     }
-
     #userProfile.nav-item {
         display: flex;
         flex-direction: column;
@@ -1601,33 +1717,27 @@ a.cta-button {
         gap: 0.85rem;
         padding: 1.1rem 1.35rem 1.25rem;
     }
-
     #userProfile .user-welcome {
         font-size: 0.95rem;
         line-height: 1.4;
     }
-
     #userProfile .logout-btn {
         width: 100%;
         padding: 0.9rem 1rem;
         font-size: 0.95rem;
     }
-
     .hamburger {
         display: flex;
         position: relative;
         z-index: 1003;
     }
-
     .hamburger.active span:nth-child(1) {
         transform: translateY(7px) rotate(45deg);
     }
-
     .hamburger.active span:nth-child(2) {
         opacity: 0;
         transform: scaleX(0);
     }
-
     .hamburger.active span:nth-child(3) {
         transform: translateY(-7px) rotate(-45deg);
     }
@@ -1694,11 +1804,9 @@ a.cta-button {
     .logo-subtitle {
         display: none;
     }
-
     .navbar-logo {
         font-size: 1.3rem;
     }
-
     .hero-content h1 {
         font-size: 2rem;
     }
@@ -1766,6 +1874,7 @@ a.cta-button {
     padding-bottom: 5rem;
 }
 
+
 /* =====================================================
    SPA PAGE SECTIONS (navbar sub-views)
    ===================================================== */
@@ -1781,6 +1890,7 @@ a.cta-button {
 .page-section .section {
     min-height: auto;
 }
+
 
 /* =====================================================
    AUTH PAGE (login.html — no canvas / FinBot)

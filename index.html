@@ -29,7 +29,7 @@
                 <li class="nav-item">
                     <a href="analyse.html" class="nav-link">Analyse</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" id="premiumNavItem">
                     <a href="premium.html" class="nav-link">Premium</a>
                 </li>
                 <li class="nav-item" id="profileNavItem" style="display: none;">
@@ -37,10 +37,6 @@
                 </li>
                 <li class="nav-item" id="loginItem">
                     <a href="login.html" class="nav-link login-btn">Login</a>
-                </li>
-                <li class="nav-item" id="userProfile" style="display: none;">
-                    <span class="user-welcome">Welcome, <span id="userName">User</span></span>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
                 </li>
             </ul>
             <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
@@ -58,8 +54,8 @@
     <!-- Main Content -->
     <main>
         <!-- Home Section -->
-        <section id="home" class="section hero-section">
-            <div class="hero-content">
+        <section id="home" class="section hero-section animate-on-scroll">
+            <div class="hero-content animate-on-scroll">
                 <h1>Welcome to ZEROFY</h1>
                 <p class="hero-subtitle">Your Gateway to Smart Stock Market Analysis</p>
                 <p class="hero-finbot-tagline">Meet <strong>FinBot</strong> — your on-page guide for quick market analysis tips.</p>
@@ -94,10 +90,10 @@
         </section>
 
         <!-- About Section with Floaters -->
-        <section id="about" class="section about-section">
+        <section id="about" class="section about-section animate-on-scroll">
             <h2>Why ZEROFY?</h2>
 
-            <div class="floaters-container">
+            <div class="floaters-container animate-on-scroll">
                 <div class="floater floater-1">
                     <div class="floater-icon">📈</div>
                     <h3>What is Stock Market?</h3>
@@ -136,8 +132,39 @@
             </div>
         </section>
 
+        <section id="latest-news" class="section news-section animate-on-scroll">
+            <h2>Latest news from around the world</h2>
+            <p class="news-intro">Fresh market headlines and macro developments to keep your investing view aligned with global trends.</p>
+            <div class="news-grid">
+                <article class="news-card animate-on-scroll">
+                    <span class="news-tag">Market</span>
+                    <h3>Global markets rally as tech earnings beat expectations</h3>
+                    <p>Major indexes gained steam after several large-cap companies reported stronger-than-forecast revenue.</p>
+                    <p class="news-meta">Last 2 hours · New York</p>
+                </article>
+                <article class="news-card animate-on-scroll">
+                    <span class="news-tag">Commodities</span>
+                    <h3>Gold holds steady as inflation signals remain mixed</h3>
+                    <p>Gold prices remain supported while investors weigh central bank guidance and economic data.</p>
+                    <p class="news-meta">Today · London</p>
+                </article>
+                <article class="news-card animate-on-scroll">
+                    <span class="news-tag">Energy</span>
+                    <h3>Oil firms jump after OPEC confirms production stability</h3>
+                    <p>Crude futures rose on news that OPEC and its partners will keep output policy unchanged.</p>
+                    <p class="news-meta">Today · Dubai</p>
+                </article>
+                <article class="news-card animate-on-scroll">
+                    <span class="news-tag">Global</span>
+                    <h3>Asian markets open higher on easing trade tensions</h3>
+                    <p>Positive sentiment in Asia helped lift equities after reports of renewed dialogue between major economies.</p>
+                    <p class="news-meta">Today · Tokyo</p>
+                </article>
+            </div>
+        </section>
+
         <!-- How Stock Market Works -->
-        <section id="how-it-works" class="section info-section">
+        <section id="how-it-works" class="section info-section animate-on-scroll">
             <h2>How Does Stock Market Work?</h2>
             <div class="info-grid">
                 <div class="info-card">
@@ -164,7 +191,7 @@
         </section>
 
         <!-- Commodities Section -->
-        <section id="commodities" class="section commodities-section">
+        <section id="commodities" class="section commodities-section animate-on-scroll">
             <h2>Gold & Silver Price Watch</h2>
             <div class="commodities-layout">
                 <div class="commodity-chart-panel">
@@ -178,7 +205,7 @@
                             <span class="legend-item silver-line">Silver</span>
                         </div>
                     </div>
-                    <svg class="commodity-chart" viewBox="0 0 640 320" role="img" aria-label="Gold and silver price trend graph">
+                    <svg class="commodity-chart animate-on-scroll" viewBox="0 0 640 320" role="img" aria-label="Gold and silver price trend graph">
                         <line x1="58" y1="42" x2="58" y2="268" class="chart-axis" />
                         <line x1="58" y1="268" x2="592" y2="268" class="chart-axis" />
                         <line x1="58" y1="92" x2="592" y2="92" class="chart-grid" />
