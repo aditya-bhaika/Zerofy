@@ -158,6 +158,10 @@ async function postToSheets(action, payload = {}) {
     const rawText = await response.text();
     let data;
 
+    if (response.status === 401 || response.status === 403) {
+        throw new Error('Google Sheets backend is not public. Redeploy the Apps Script web app with access set to "Anyone".');
+    }
+
     try {
         data = rawText ? JSON.parse(rawText) : {};
     } catch (error) {
@@ -453,6 +457,14 @@ document.querySelectorAll('.nav-link').forEach(link => {
 document.addEventListener('DOMContentLoaded', () => {
     populateStocks();
     sessionManager.loadSession();
+
+    const loginLink = document.querySelector('.login-btn');
+    if (loginLink) {
+        loginLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            openLoginModal();
+        });
+    }
 
     // Smooth scroll for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
