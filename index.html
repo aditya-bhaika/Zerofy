@@ -21,6 +21,9 @@
                     <a href="#home" class="nav-link">Home Page</a>
                 </li>
                 <li class="nav-item">
+                    <a href="about.html" class="nav-link">About Us</a>
+                </li>
+                <li class="nav-item">
                     <a href="#stocks" class="nav-link">Stocks</a>
                 </li>
                 <li class="nav-item">
@@ -99,7 +102,34 @@
             <div class="hero-content">
                 <h1>Welcome to ZEROFY</h1>
                 <p class="hero-subtitle">Your Gateway to Smart Stock Market Analysis</p>
-                <button class="cta-button" onclick="scrollToSection('about')">Learn More</button>
+                <p class="hero-finbot-tagline">Meet <strong>FinBot</strong> — your on-page guide for quick market analysis tips.</p>
+                <div class="hero-actions">
+                    <button type="button" class="cta-button" onclick="scrollToSection('about')">Learn More</button>
+                    <a href="about.html" class="cta-button cta-button-secondary">About Us</a>
+                </div>
+            </div>
+
+            <!-- FinBot: analysis chatbot (home section) -->
+            <div id="finbot" class="finbot" aria-label="FinBot analysis assistant">
+                <button type="button" id="finbotToggle" class="finbot-toggle" aria-expanded="false" aria-controls="finbotPanel">
+                    <span class="finbot-toggle-icon" aria-hidden="true">◆</span>
+                    <span class="finbot-toggle-label">FinBot</span>
+                </button>
+                <div id="finbotPanel" class="finbot-panel" role="dialog" aria-modal="true" aria-labelledby="finbotTitle" hidden>
+                    <div class="finbot-header">
+                        <div>
+                            <h2 id="finbotTitle" class="finbot-title">FinBot</h2>
+                            <p class="finbot-subtitle">Market analysis assistant</p>
+                        </div>
+                        <button type="button" id="finbotClose" class="finbot-close" aria-label="Close FinBot">&times;</button>
+                    </div>
+                    <div id="finbotMessages" class="finbot-messages" role="log"></div>
+                    <form id="finbotForm" class="finbot-form">
+                        <label for="finbotInput" class="visually-hidden">Message FinBot</label>
+                        <input type="text" id="finbotInput" class="finbot-input" placeholder="Ask about stocks, risk, gold…" autocomplete="off" maxlength="500">
+                        <button type="submit" class="finbot-send">Send</button>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -386,6 +416,7 @@
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="#home">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
                     <li><a href="#stocks">Stocks</a></li>
                     <li><a href="#analyse">Analyse</a></li>
                 </ul>

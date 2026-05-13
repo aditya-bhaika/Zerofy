@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us — ZEROFY</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a href="index.html#home">ZEROFY</a>
+                <span class="logo-subtitle">Stock Analysis Hub</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="index.html#home" class="nav-link">Home Page</a>
+                </li>
+                <li class="nav-item">
+                    <a href="about.html" class="nav-link" aria-current="page">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#stocks" class="nav-link">Stocks</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#analyse" class="nav-link">Analyse</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#premium" class="nav-link">Premium</a>
+                </li>
+                <li class="nav-item" id="loginItem">
+                    <a href="#login" class="nav-link login-btn" onclick="openLoginModal(); return false;">Login</a>
+                </li>
+                <li class="nav-item" id="userProfile" style="display: none;">
+                    <span class="user-welcome">Welcome, <span id="userName">User</span></span>
+                    <button type="button" class="logout-btn" onclick="logout()">Logout</button>
+                </li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <canvas id="stockBackground"></canvas>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Login to ZEROFY</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+                <p class="switch-form">Don't have an account? <a href="#" onclick="switchToSignup()">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSignupModal()">&times;</span>
+            <h2>Create Account</h2>
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupName">Full Name:</label>
+                    <input type="text" id="signupName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email:</label>
+                    <input type="email" id="signupEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password:</label>
+                    <input type="password" id="signupPassword" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+                <p class="switch-form">Already have an account? <a href="#" onclick="switchToLogin()">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <main>
+        <section class="section hero-section about-hero-page">
+            <div class="hero-content">
+                <h1>About ZEROFY</h1>
+                <p class="hero-subtitle">An endeavour by Divine Enterprise — making stock market analysis clear, modern, and approachable.</p>
+                <a href="index.html#home" class="cta-button">Back to Home</a>
+            </div>
+        </section>
+
+        <section class="section about-section about-founders-section">
+            <h2>Meet Our Co-Founders</h2>
+            <p class="about-page-intro">
+                ZEROFY was built by two operators who care about transparency in markets: one from quantitative research and product,
+                the other from investor education and design. Together they focus on tools that explain <em>why</em> prices move — not just <em>what</em> the tick says.
+            </p>
+
+            <div class="floaters-container floaters-container--founders">
+                <article class="floater floater-1 floater-founder">
+                    <div class="founder-photo-wrap">
+                        <img class="founder-photo" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&auto=format"
+                            alt="Portrait of Rohan Mehta, Co-founder" width="320" height="320" loading="lazy">
+                    </div>
+                    <span class="founder-role">Co-founder &amp; Head of Research</span>
+                    <h3>Rohan Mehta</h3>
+                    <p>
+                        Rohan leads ZEROFY’s research direction: screening logic, factor-style views, and how we translate noisy market data into calm, readable takeaways.
+                        Previously he built analytics dashboards for retail investors and mentored university trading clubs on risk-aware position sizing.
+                    </p>
+                </article>
+
+                <article class="floater floater-2 floater-founder">
+                    <div class="founder-photo-wrap">
+                        <img class="founder-photo" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&auto=format"
+                            alt="Portrait of Kavya Nair, Co-founder" width="320" height="320" loading="lazy">
+                    </div>
+                    <span class="founder-role">Co-founder &amp; Head of Product</span>
+                    <h3>Kavya Nair</h3>
+                    <p>
+                        Kavya shapes the ZEROFY experience end-to-end — from onboarding flows to the FinBot assistant and premium education tracks.
+                        She believes great analysis should feel like a conversation: structured, jargon-light, and respectful of every skill level.
+                    </p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ZEROFY</h4>
+                <p>Making stock market analysis simple and accessible for everyone. An Endeavour by Divine Enterprise</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="index.html#stocks">Stocks</a></li>
+                    <li><a href="index.html#analyse">Analyse</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p class="footer-contact-item"><span>Phone</span><a href="tel:+917605860666">+91 7605860666</a></p>
+                <p class="footer-contact-item"><span>Mail</span><a href="mailto:info@zerofy.com">info@zerofy.com</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on Instagram"><span class="social-icon">IG</span>Instagram</a>
+                    <a href="" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on Facebook"><span class="social-icon">f</span>Facebook</a>
+                    <a href="" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on LinkedIn"><span class="social-icon">in</span>LinkedIn</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ZEROFY. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

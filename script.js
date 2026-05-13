@@ -257,6 +257,10 @@ class SessionManager {
 
 const sessionManager = new SessionManager();
 
+function isAboutStandalonePage() {
+    return /about\.html$/i.test(window.location.pathname || '');
+}
+
 // Login handler (Google Sheets)
 async function handleLogin(event) {
     event.preventDefault();
@@ -280,9 +284,13 @@ async function handleLogin(event) {
             });
             closeLoginModal();
             document.getElementById('loginForm').reset();
-            showPage('home');
-            window.scrollTo(0, 0);
             alert('Login successful!');
+            if (isAboutStandalonePage()) {
+                window.location.href = 'index.html#home';
+            } else {
+                showPage('home');
+                window.scrollTo(0, 0);
+            }
         } else {
             alert(data.message || 'Login failed!');
         }
@@ -324,9 +332,13 @@ async function handleSignup(event) {
             });
             closeSignupModal();
             document.getElementById('signupForm').reset();
-            showPage('home');
-            window.scrollTo(0, 0);
             alert('Signup successful!');
+            if (isAboutStandalonePage()) {
+                window.location.href = 'index.html#home';
+            } else {
+                showPage('home');
+                window.scrollTo(0, 0);
+            }
         } else {
             alert(data.message || 'Signup failed!');
         }
@@ -483,9 +495,12 @@ function showPage(page) {
 }
 
 function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        sessionManager.logout();
+    if (!confirm('Are you sure you want to logout?')) return;
+    sessionManager.logout();
+    if (document.getElementById('logoutPage')) {
         showPage('logout');
+    } else {
+        window.location.href = 'index.html#home';
     }
 }
 
@@ -509,22 +524,123 @@ function scrollToSection(sectionId) {
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
 
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
-
-// Close menu when link is clicked
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
     });
-});
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+        });
+    });
+}
 
 // ===== INITIALIZE ON PAGE LOAD =====
+
+function applyInitialHashRoute() {
+    const raw = window.location.hash;
+    if (!raw || raw.length < 2) return;
+    const id = raw.slice(1).split('&')[0];
+    if (SPA_ROUTE_IDS.includes(id)) {
+        showPage(id);
+    }
+}
+
+function getFinBotReply(text) {
+    const t = text.toLowerCase().trim();
+    if (!t) {
+        return 'Type a question and I will share a quick, analysis-style tip.';
+    }
+    if (/^(hi|hello|hey)\b/.test(t)) {
+        return 'Hello! I am FinBot. Ask about stocks, risk, diversification, or commodities — I will keep it practical.';
+    }
+    if (/\b(stock|stocks|aapl|nvda|msft|market|invest|equity|ticker)\b/.test(t)) {
+        return 'For equities, look at earnings trend, balance sheet strength, and how the name fits your time horizon. Diversify across sectors — our Trending Stocks area is a good place to compare symbols.';
+    }
+    if (/\b(risk|volatile|volatility|crash|drawdown)\b/.test(t)) {
+        return 'Risk is normal in markets. Size positions sensibly, avoid going all-in on one ticker, and keep liquidity outside equities. When volatility spikes, revisit allocation instead of panic-trading.';
+    }
+    if (/\b(portfolio|diversify|allocation|rebalance)\b/.test(t)) {
+        return 'Think in layers: core quality holdings, a few satellite ideas, and optional diversifiers like gold when uncertainty rises. Rebalance when any sleeve drifts far from your plan.';
+    }
+    if (/\b(gold|silver|commodit|inflation)\b/.test(t)) {
+        return 'Commodities often move differently from stocks. Gold is often viewed as a store of value in inflation or stress; silver blends industrial demand with investment flows. See our Gold & Silver section on the home page for context.';
+    }
+    if (/\b(zerofy|about|team|founder)\b/.test(t)) {
+        return 'ZEROFY is built to make analysis clearer. Meet our co-founders on the About Us page — linked from the home hero.';
+    }
+    if (/\b(thanks|thank you|bye|goodbye)\b/.test(t)) {
+        return 'You are welcome — happy analyzing!';
+    }
+    return 'I am a guided assistant (not personalized financial advice). Try words like stocks, risk, gold, or portfolio, or explore Premium tools on the main site for deeper workflows.';
+}
+
+function initFinBot() {
+    const root = document.getElementById('finbot');
+    if (!root) return;
+
+    const toggle = document.getElementById('finbotToggle');
+    const panel = document.getElementById('finbotPanel');
+    const closeBtn = document.getElementById('finbotClose');
+    const form = document.getElementById('finbotForm');
+    const input = document.getElementById('finbotInput');
+    const messages = document.getElementById('finbotMessages');
+
+    if (!toggle || !panel || !closeBtn || !form || !input || !messages) return;
+
+    function appendMsg(text, role) {
+        const div = document.createElement('div');
+        div.className = `finbot-msg finbot-msg--${role}`;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function openPanel() {
+        panel.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        input.focus();
+    }
+
+    function closePanel() {
+        panel.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function seedWelcome() {
+        if (messages.dataset.seeded) return;
+        appendMsg('Hi! I am FinBot. Ask me about market analysis basics — stocks, risk, or commodities.', 'bot');
+        messages.dataset.seeded = '1';
+    }
+
+    toggle.addEventListener('click', () => {
+        if (panel.hidden) {
+            seedWelcome();
+            openPanel();
+        } else {
+            closePanel();
+        }
+    });
+
+    closeBtn.addEventListener('click', closePanel);
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        appendMsg(text, 'user');
+        input.value = '';
+        const reply = getFinBotReply(text);
+        window.setTimeout(() => appendMsg(reply, 'bot'), 320);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     populateStocks();
     sessionManager.loadSession();
+    applyInitialHashRoute();
+    initFinBot();
 
     const loginLink = document.querySelector('.login-btn');
     if (loginLink) {
@@ -578,6 +694,7 @@ document.addEventListener('click', (e) => {
 
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
     if (window.scrollY > 50) {
         navbar.style.boxShadow = '0 5px 25px rgba(0, 0, 0, 0.5)';
     } else {
