@@ -433,8 +433,17 @@ main {
     font-size: 3rem;
     color: var(--secondary-color);
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
     font-weight: 900;
+}
+
+.section-intro {
+    max-width: 760px;
+    margin: 0 auto 3rem;
+    color: rgba(255, 255, 255, 0.78);
+    text-align: center;
+    line-height: 1.7;
+    font-size: 1.05rem;
 }
 
 .stocks-grid {
@@ -526,7 +535,7 @@ main {
     font-size: 3rem;
     color: var(--secondary-color);
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
     font-weight: 900;
 }
 
@@ -597,7 +606,7 @@ main {
     font-size: 3rem;
     color: var(--secondary-color);
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
     font-weight: 900;
 }
 

@@ -18,7 +18,7 @@
             </div>
             <ul class="nav-menu" id="navMenu">
                 <li class="nav-item">
-                    <a href="#home" class="nav-link">Home Page</a>
+                    <a href="#home" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
                     <a href="#stocks" class="nav-link">Stocks</a>
@@ -97,9 +97,9 @@
         <!-- Home Section -->
         <section id="home" class="section hero-section">
             <div class="hero-content">
-                <h1>Welcome to ZEROFY</h1>
-                <p class="hero-subtitle">Your Gateway to Smart Stock Market Analysis</p>
-                <button class="cta-button" onclick="scrollToSection('about')">Learn More</button>
+                <h1>ZEROFY</h1>
+                <p class="hero-subtitle">Clear stock research, portfolio tracking, and market learning for smarter investing decisions.</p>
+                <button class="cta-button" onclick="scrollToSection('stocks')">Explore Stocks</button>
             </div>
         </section>
 
@@ -117,13 +117,13 @@
                 <div class="floater floater-2">
                     <div class="floater-icon">🎯</div>
                     <h3>Our Mission</h3>
-                    <p>We make stock market analysis simple and accessible. No confusing jargon, just clear insights to help you make smarter investment decisions. Whether you're a beginner or experienced, ZEROFY guides you.</p>
+                    <p>ZEROFY helps new and growing investors understand markets without confusing jargon. We turn company data, price movement, and risk signals into practical research notes.</p>
                 </div>
 
                 <div class="floater floater-3">
                     <div class="floater-icon">🔍</div>
                     <h3>Smart Analysis</h3>
-                    <p>Our advanced tools analyze market trends, company performance, and risk factors. We break down complex data into easy-to-understand insights so you can invest with confidence.</p>
+                    <p>Compare trending companies by price action, performance, and watchlist fit. Each stock card gives you a fast starting point before you do deeper research.</p>
                 </div>
 
                 <div class="floater floater-4">
@@ -135,13 +135,13 @@
                 <div class="floater floater-5">
                     <div class="floater-icon">🚀</div>
                     <h3>Real-Time Tracking</h3>
-                    <p>Monitor your favorite stocks in real-time. Get instant alerts on price changes, market news, and trading opportunities. Stay ahead with live market data and expert analysis.</p>
+                    <p>Add stocks to your portfolio watchlist and keep your research organized. Your selections are saved through the connected Google Sheets backend.</p>
                 </div>
 
                 <div class="floater floater-6">
                     <div class="floater-icon">🛡️</div>
                     <h3>Safe & Secure</h3>
-                    <p>Your data is protected with enterprise-grade security. We use encryption and secure databases to keep your personal information and investment portfolio completely safe.</p>
+                    <p>Account access and portfolio entries are handled through a controlled backend sheet. For serious investing, always keep financial account credentials outside research tools.</p>
                 </div>
             </div>
         </section>
@@ -176,6 +176,7 @@
         <!-- Stocks Section -->
         <section id="stocks" class="section stocks-section">
             <h2>Trending Stocks</h2>
+            <p class="section-intro">Track widely followed market leaders, compare daily movement, and save the companies you want to research later.</p>
             <div class="stocks-grid" id="stocksGrid">
                 <!-- Stocks will be populated by JavaScript -->
             </div>
@@ -184,28 +185,30 @@
         <!-- Analyse Section -->
         <section id="analyse" class="section analyse-section">
             <h2>Market Analysis Tools</h2>
+            <p class="section-intro">Use these tools as a research workflow: screen the market, review your saved ideas, then read the news behind price moves.</p>
             <div class="analysis-tools">
                 <div class="tool-card">
                     <h3>Stock Screener</h3>
-                    <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                    <button class="tool-btn">Open Screener</button>
+                    <p>Shortlist stocks by trend, price movement, business quality, and risk. Start with large, liquid companies before exploring smaller opportunities.</p>
+                    <button class="tool-btn" onclick="scrollToSection('stocks')">Open Screener</button>
                 </div>
                 <div class="tool-card">
                     <h3>Portfolio Tracker</h3>
-                    <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                    <button class="tool-btn">View Portfolio</button>
+                    <p>Save interesting stocks to your personal watchlist after login. Use it to compare ideas before making any real investment decision.</p>
+                    <button class="tool-btn" onclick="alert('Login and add stocks from the Trending Stocks section to build your portfolio watchlist.')">View Portfolio</button>
                 </div>
                 <div class="tool-card">
                     <h3>Market News</h3>
-                    <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                    <button class="tool-btn">Read News</button>
+                    <p>Review earnings updates, sector trends, interest-rate signals, and market sentiment so price changes have context.</p>
+                    <button class="tool-btn" onclick="alert('Market news summaries are coming soon. For now, use ZEROFY to organize your stock watchlist.')">Read News</button>
                 </div>
             </div>
         </section>
 
         <!-- Premium Section -->
         <section id="premium" class="section premium-section">
-            <h2>Upgrade to Premium</h2>
+            <h2>ZEROFY Plans</h2>
+            <p class="section-intro">Choose the research depth that fits your investing journey. The free plan is enough to begin tracking stocks today.</p>
             <div class="premium-cards">
                 <div class="premium-card basic">
                     <h3>Free Plan</h3>
@@ -230,7 +233,7 @@
                         <li>✓ Expert insights</li>
                         <li>✗ Premium support</li>
                     </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
+                    <button class="premium-btn" onclick="alert('Pro plan interest noted. Payment integration is coming soon.')">Upgrade Now</button>
                 </div>
 
                 <div class="premium-card elite">
@@ -243,7 +246,7 @@
                         <li>✓ Expert insights</li>
                         <li>✓ 24/7 Premium support</li>
                     </ul>
-                    <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
+                    <button class="premium-btn" onclick="alert('Elite plan interest noted. Advisor-grade research features are coming soon.')">Upgrade Now</button>
                 </div>
             </div>
         </section>
@@ -254,7 +257,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h4>ZEROFY</h4>
-                <p>Making stock market analysis simple and accessible for everyone.</p>
+                <p>Making stock market research simple, structured, and accessible for students, beginners, and curious investors.</p>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
@@ -266,15 +269,15 @@
             </div>
             <div class="footer-section">
                 <h4>Contact</h4>
-                <p>Email: info@zerofy.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
+                <p>Email: support@zerofy.in</p>
+                <p>Focus: stock research, watchlists, and investor education</p>
             </div>
             <div class="footer-section">
                 <h4>Follow Us</h4>
                 <div class="social-links">
-                    <a href="#">Twitter</a>
-                    <a href="#">LinkedIn</a>
-                    <a href="#">Facebook</a>
+                    <a href="#stocks">Market Watch</a>
+                    <a href="#analyse">Research Tools</a>
+                    <a href="#premium">Plans</a>
                 </div>
             </div>
         </div>
@@ -294,6 +297,7 @@
 <div id="stocksPage" class="page-section" style="display:none;">
     <section class="section">
         <h2>Trending Stocks</h2>
+        <p class="section-intro">Browse active market names, review quick price signals, and add your strongest ideas to your ZEROFY portfolio watchlist.</p>
         <div class="stocks-grid" id="stocksGridPage"></div>
     </section>
 </div>
@@ -301,21 +305,22 @@
 <div id="analysePage" class="page-section" style="display:none;">
     <section class="section">
         <h2>Market Analysis Tools</h2>
+        <p class="section-intro">A simple research desk for turning market noise into a watchlist: screen, save, and review before making decisions.</p>
         <div class="analysis-tools">
             <div class="tool-card">
                 <h3>Stock Screener</h3>
-                <p>Filter stocks by market cap, price, and performance metrics. Find hidden gems that match your investment style.</p>
-                <button class="tool-btn">Open Screener</button>
+                <p>Study companies by price trend, volatility, sector strength, and watchlist potential. Use the stock page as your first screening table.</p>
+                <button class="tool-btn" onclick="showPage('stocks')">Open Screener</button>
             </div>
             <div class="tool-card">
                 <h3>Portfolio Tracker</h3>
-                <p>Track all your investments in one place. See your gains/losses, diversification, and performance metrics.</p>
-                <button class="tool-btn">View Portfolio</button>
+                <p>Keep a personal list of stocks you want to follow. Login, add stocks, and use the saved list as your research queue.</p>
+                <button class="tool-btn" onclick="alert('Login and add stocks from the Trending Stocks page to build your watchlist.')">View Portfolio</button>
             </div>
             <div class="tool-card">
                 <h3>Market News</h3>
-                <p>Get real-time news that impacts the stock market. Stay informed about earnings, economic data, and trends.</p>
-                <button class="tool-btn">Read News</button>
+                <p>Connect price movement with earnings, sector updates, policy decisions, and major market events.</p>
+                <button class="tool-btn" onclick="alert('Curated market news is coming soon. Use the stock and portfolio tools today.')">Read News</button>
             </div>
         </div>
     </section>
@@ -323,7 +328,8 @@
 <!-- Premium Page -->
 <div id="premiumPage" class="page-section" style="display:none;">
     <section class="section">
-        <h2>Upgrade to Premium</h2>
+        <h2>ZEROFY Plans</h2>
+        <p class="section-intro">Start free, then upgrade when you need deeper analysis, expert commentary, and stronger portfolio review tools.</p>
         <div class="premium-cards">
             <div class="premium-card basic">
                 <h3>Free Plan</h3>
@@ -347,7 +353,7 @@
                     <li>✓ Expert insights</li>
                     <li>✗ Premium support</li>
                 </ul>
-                <button class="premium-btn" onclick="alert('Upgrade to Pro!')">Upgrade Now</button>
+                <button class="premium-btn" onclick="alert('Pro plan interest noted. Payment integration is coming soon.')">Upgrade Now</button>
             </div>
             <div class="premium-card elite">
                 <h3>Elite Plan</h3>
@@ -359,7 +365,7 @@
                     <li>✓ Expert insights</li>
                     <li>✓ 24/7 Premium support</li>
                 </ul>
-                <button class="premium-btn" onclick="alert('Upgrade to Elite!')">Upgrade Now</button>
+                <button class="premium-btn" onclick="alert('Elite plan interest noted. Advisor-grade research features are coming soon.')">Upgrade Now</button>
             </div>
         </div>
     </section>
