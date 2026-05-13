@@ -39,12 +39,13 @@
                     <button type="button" class="logout-btn" onclick="logout()">Logout</button>
                 </li>
             </ul>
-            <div class="hamburger" id="hamburger">
+            <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
+        <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
     </nav>
 
     <canvas id="stockBackground"></canvas>

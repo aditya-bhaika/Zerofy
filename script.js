@@ -519,22 +519,56 @@ function scrollToSection(sectionId) {
     }
 }
 
-// ===== HAMBURGER MENU =====
+// ===== MOBILE NAV (drawer + backdrop) =====
 
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('navMenu');
+(function initMobileNav() {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+    const navBackdrop = document.getElementById('navBackdrop');
 
-if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
+    if (!hamburger || !navMenu) return;
+
+    function setMobileNavOpen(open) {
+        const isOpen = Boolean(open);
+        navMenu.classList.toggle('active', isOpen);
+        document.body.classList.toggle('nav-menu-open', isOpen);
+        hamburger.classList.toggle('active', isOpen);
+        hamburger.setAttribute('aria-expanded', String(isOpen));
+        hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+        if (navBackdrop) {
+            navBackdrop.setAttribute('aria-hidden', String(!isOpen));
+        }
+    }
+
+    hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMobileNavOpen(!navMenu.classList.contains('active'));
+    });
+
+    if (navBackdrop) {
+        navBackdrop.addEventListener('click', () => setMobileNavOpen(false));
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            setMobileNavOpen(false);
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+            setMobileNavOpen(false);
+        }
     });
 
     document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            navMenu.classList.remove('active');
-        });
+        link.addEventListener('click', () => setMobileNavOpen(false));
     });
-}
+
+    document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', () => setMobileNavOpen(false));
+    });
+})();
 
 // ===== INITIALIZE ON PAGE LOAD =====
 
