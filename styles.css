@@ -1260,6 +1260,7 @@ a.cta-button {
 
 .profile-plan-actions {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1.5rem;
