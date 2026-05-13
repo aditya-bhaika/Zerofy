@@ -173,6 +173,53 @@
             </div>
         </section>
 
+        <!-- Commodities Section -->
+        <section id="commodities" class="section commodities-section">
+            <h2>Gold & Silver Price Watch</h2>
+            <div class="commodities-layout">
+                <div class="commodity-chart-panel">
+                    <div class="commodity-chart-header">
+                        <div>
+                            <h3>Commodity Price Trend</h3>
+                            <p>Illustrative 6-month movement for learning and comparison.</p>
+                        </div>
+                        <div class="commodity-legend">
+                            <span class="legend-item gold-line">Gold</span>
+                            <span class="legend-item silver-line">Silver</span>
+                        </div>
+                    </div>
+                    <svg class="commodity-chart" viewBox="0 0 640 320" role="img" aria-label="Gold and silver price trend graph">
+                        <line x1="58" y1="42" x2="58" y2="268" class="chart-axis" />
+                        <line x1="58" y1="268" x2="592" y2="268" class="chart-axis" />
+                        <line x1="58" y1="92" x2="592" y2="92" class="chart-grid" />
+                        <line x1="58" y1="151" x2="592" y2="151" class="chart-grid" />
+                        <line x1="58" y1="210" x2="592" y2="210" class="chart-grid" />
+                        <polyline class="gold-trend" points="58,214 154,190 250,202 346,166 442,128 538,96" />
+                        <polyline class="silver-trend" points="58,232 154,222 250,196 346,184 442,148 538,134" />
+                        <text x="52" y="286" class="chart-label">Jan</text>
+                        <text x="148" y="286" class="chart-label">Feb</text>
+                        <text x="244" y="286" class="chart-label">Mar</text>
+                        <text x="340" y="286" class="chart-label">Apr</text>
+                        <text x="436" y="286" class="chart-label">May</text>
+                        <text x="532" y="286" class="chart-label">Jun</text>
+                        <text x="552" y="98" class="gold-label">Gold</text>
+                        <text x="552" y="136" class="silver-label">Silver</text>
+                    </svg>
+                </div>
+
+                <div class="commodity-info">
+                    <div class="commodity-card">
+                        <h3>Why Buy Gold?</h3>
+                        <p>Gold is often used as a store of value during inflation, currency weakness, and market uncertainty. Investors add it to balance risk when stocks become volatile.</p>
+                    </div>
+                    <div class="commodity-card">
+                        <h3>Why Buy Silver?</h3>
+                        <p>Silver has both investment demand and industrial use in electronics, solar panels, and manufacturing. It can move faster than gold, but it also carries higher volatility.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Stocks Section -->
         <section id="stocks" class="section stocks-section">
             <h2>Trending Stocks</h2>
@@ -266,15 +313,15 @@
             </div>
             <div class="footer-section">
                 <h4>Contact</h4>
-                <p>Email: info@zerofy.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
+                <p class="footer-contact-item"><span>Phone</span><a href="tel:+919876543210">+91 98765 43210</a></p>
+                <p class="footer-contact-item"><span>Mail</span><a href="mailto:info@zerofy.com">info@zerofy.com</a></p>
             </div>
             <div class="footer-section">
                 <h4>Follow Us</h4>
                 <div class="social-links">
-                    <a href="#">Twitter</a>
-                    <a href="#">LinkedIn</a>
-                    <a href="#">Facebook</a>
+                    <a href="https://www.instagram.com/zerofy" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on Instagram"><span class="social-icon">IG</span>Instagram</a>
+                    <a href="https://www.facebook.com/zerofy" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on Facebook"><span class="social-icon">f</span>Facebook</a>
+                    <a href="https://www.linkedin.com/company/zerofy" target="_blank" rel="noopener noreferrer" aria-label="ZEROFY on LinkedIn"><span class="social-icon">in</span>LinkedIn</a>
                 </div>
             </div>
         </div>
@@ -386,6 +433,7 @@
             document.getElementById('home').style.display = '';
             document.getElementById('about').style.display = '';
             document.getElementById('how-it-works').style.display = '';
+            document.getElementById('commodities').style.display = '';
         } else {
             document.querySelector('main').style.display = 'none';
             document.getElementById(page + 'Page').style.display = 'block';
