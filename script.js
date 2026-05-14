@@ -467,7 +467,8 @@ function hideForgotPassword(event) {
 
 function handleForgotPassword(event) {
     event.preventDefault();
-    const email = document.getElementById('resetEmail') ? .value.trim();
+    const resetEmailInput = document.getElementById('resetEmail');
+    const email = resetEmailInput ? resetEmailInput.value.trim() : '';
     if (!email) {
         alert('Please enter your email address.');
         return;

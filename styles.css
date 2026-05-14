@@ -1510,17 +1510,15 @@ a.cta-button {
     display: none;
 }
 
-font-weight: 700;
-cursor: pointer;
-
-}
 .switch-form a:hover {
     text-decoration: underline;
 }
 
+
 /* =====================================================
    FOOTER
    ===================================================== */
+
 .footer {
     position: relative;
     z-index: 2;
@@ -1530,6 +1528,7 @@ cursor: pointer;
     border-top: 2px solid rgba(255, 255, 255, 0.1);
     margin-top: 4rem;
 }
+
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
@@ -1538,41 +1537,50 @@ cursor: pointer;
     gap: 2rem;
     margin-bottom: 2rem;
 }
+
 .footer-section h4 {
     color: var(--green);
     font-size: 1.2rem;
     margin-bottom: 1rem;
     font-weight: 700;
 }
+
 .footer-section p {
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.8;
 }
+
 .footer-section ul {
     list-style: none;
 }
+
 .footer-section ul li {
     margin-bottom: 0.5rem;
 }
+
 .footer-section a {
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     transition: var(--transition);
 }
+
 .footer-section a:hover {
     color: var(--green);
 }
+
 .social-links {
     display: flex;
     gap: 0.8rem;
     flex-wrap: wrap;
 }
+
 .social-links a {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
     font-weight: 600;
 }
+
 .social-icon {
     display: inline-flex;
     align-items: center;
@@ -1586,23 +1594,28 @@ cursor: pointer;
     font-weight: 900;
     line-height: 1;
 }
+
 .footer-contact-item {
     display: grid;
     gap: 0.2rem;
 }
+
 .footer-contact-item span {
     color: rgba(255, 255, 255, 0.58);
     font-size: 0.85rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
+
 .footer-contact-item a {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
 }
+
 .footer-contact-item a:hover {
     color: var(--green);
 }
+
 .footer-bottom {
     text-align: center;
     padding-top: 2rem;
@@ -1610,70 +1623,72 @@ cursor: pointer;
     color: rgba(255, 255, 255, 0.6);
 }
 
+
 /* =====================================================
    ANIMATIONS
    ===================================================== */
+
 @keyframes slideInDown {
     from {
         opacity: 0;
         transform: translateY(-30px);
     }
-    
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
+
 @keyframes slideInUp {
     from {
         opacity: 0;
         transform: translateY(30px);
     }
-    
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
+
 @keyframes fadeIn {
     from {
         opacity: 0;
     }
-    
     to {
         opacity: 1;
     }
 }
+
 @keyframes floatAnimation {
     0%,
     100% {
         transform: translateY(0px);
     }
-    
     50% {
         transform: translateY(-10px);
     }
 }
+
 @keyframes slideInScale {
     from {
         opacity: 0;
         transform: scale(0.9);
     }
-    
     to {
         opacity: 1;
         transform: scale(1);
     }
 }
 
+
 /* =====================================================
    RESPONSIVE DESIGN
    ===================================================== */
+
 @media (max-width: 768px) {
     .navbar {
         padding: 0.6rem 0;
     }
-    
     .navbar-container {
         padding: 0 1rem;
         position: relative;
@@ -1681,17 +1696,14 @@ cursor: pointer;
         align-items: center;
         min-height: 52px;
     }
-    
     .navbar-logo {
         font-size: 1.45rem;
         line-height: 1.1;
     }
-    
     .logo-subtitle {
         font-size: 0.62rem;
         letter-spacing: 1.5px;
     }
-    
     .nav-backdrop {
         display: block;
         position: fixed;
@@ -1705,24 +1717,20 @@ cursor: pointer;
         pointer-events: none;
         transition: opacity 0.28s ease, visibility 0.28s ease;
     }
-    
     body.nav-menu-open .nav-backdrop {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
     }
-    
     body.nav-menu-open {
         overflow: hidden;
     }
-    
     body.nav-menu-open .finbot {
         visibility: hidden;
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.2s ease, visibility 0.2s ease;
     }
-    
     .nav-menu {
         position: fixed;
         top: 0;
@@ -1750,26 +1758,21 @@ cursor: pointer;
         z-index: 1001;
         overscroll-behavior: contain;
     }
-    
     .nav-menu.active {
         transform: translateX(0);
     }
-    
     .nav-item {
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
-    
     .nav-item:last-child {
         border-bottom: none;
     }
-    
     .nav-link {
         display: block;
         padding: 1rem 1.35rem;
         font-size: 1rem;
         font-weight: 600;
     }
-    
     .nav-item .login-btn {
         display: flex;
         align-items: center;
@@ -1779,7 +1782,6 @@ cursor: pointer;
         border-radius: 8px;
         font-weight: 700;
     }
-    
     #userProfile.nav-item {
         display: flex;
         flex-direction: column;
@@ -1787,70 +1789,56 @@ cursor: pointer;
         gap: 0.85rem;
         padding: 1.1rem 1.35rem 1.25rem;
     }
-    
     #userProfile .user-welcome {
         font-size: 0.95rem;
         line-height: 1.4;
     }
-    
     #userProfile .logout-btn {
         width: 100%;
         padding: 0.9rem 1rem;
         font-size: 0.95rem;
     }
-    
     .hamburger {
         display: flex;
         position: relative;
         z-index: 1003;
     }
-    
     .hamburger.active span:nth-child(1) {
         transform: translateY(7px) rotate(45deg);
     }
-    
     .hamburger.active span:nth-child(2) {
         opacity: 0;
         transform: scaleX(0);
     }
-    
     .hamburger.active span:nth-child(3) {
         transform: translateY(-7px) rotate(-45deg);
     }
-    
     .hero-content h1 {
         font-size: 2.5rem;
     }
-    
     .hero-actions {
         flex-direction: column;
     }
-    
     .hero-finbot-tagline {
         font-size: 0.95rem;
         padding: 0 0.5rem;
     }
-    
     .finbot {
         right: env(safe-area-inset-right, 0.75rem);
         bottom: env(safe-area-inset-bottom, 0.75rem);
         left: auto;
     }
-    
     .finbot-toggle {
         padding: 0.7rem 1rem;
         font-size: 0.88rem;
     }
-    
     .finbot-panel {
         width: min(100vw - 1.25rem, 360px);
         max-width: 92vw;
     }
-    
     .hero-subtitle {
         font-size: 1.1rem;
     }
-    
     .about-section h2,
     .info-section h2,
     .commodities-section h2,
@@ -1859,57 +1847,46 @@ cursor: pointer;
     .premium-section h2 {
         font-size: 2rem;
     }
-    
     .commodities-layout {
         grid-template-columns: 1fr;
     }
-    
     .commodity-chart-header {
         flex-direction: column;
     }
-    
     .floaters-container {
         grid-template-columns: 1fr;
     }
-    
     .section {
         padding: 3rem 1rem;
     }
-    
     .modal-content {
         width: 95%;
         margin: 30% auto;
     }
-    
     .premium-cards {
         grid-template-columns: 1fr;
     }
-    
     .footer-content {
         grid-template-columns: 1fr;
     }
-    
     .nav-link::after {
         display: none;
     }
 }
+
 @media (max-width: 480px) {
     .logo-subtitle {
         display: none;
     }
-    
     .navbar-logo {
         font-size: 1.3rem;
     }
-    
     .hero-content h1 {
         font-size: 2rem;
     }
-    
     .hero-subtitle {
         font-size: 0.9rem;
     }
-    
     .about-section h2,
     .info-section h2,
     .commodities-section h2,
@@ -1919,62 +1896,63 @@ cursor: pointer;
         font-size: 1.5rem;
         margin-bottom: 2rem;
     }
-    
     .about-section h2::before {
         width: 30px;
     }
-    
     .cta-button {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
     }
-    
     .floater {
         padding: 1.5rem;
     }
-    
     .floater-icon {
         font-size: 2rem;
     }
-    
     .floater h3 {
         font-size: 1.1rem;
     }
-    
     .info-card {
         padding: 1.5rem;
     }
-    
     .step-number {
         font-size: 2rem;
     }
 }
 
+
 /* =====================================================
    UTILITY CLASSES
    ===================================================== */
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
 }
+
 .text-center {
     text-align: center;
 }
+
 .mt-1 {
     margin-top: 1rem;
 }
+
 .mb-1 {
     margin-bottom: 1rem;
 }
+
 .py-5 {
     padding-top: 5rem;
     padding-bottom: 5rem;
 }
 
+
 /* =====================================================
    SPA PAGE SECTIONS (navbar sub-views)
    ===================================================== */
+
 .page-section {
     position: relative;
     z-index: 2;
@@ -1982,16 +1960,20 @@ cursor: pointer;
     min-height: calc(100vh - 70px);
     padding-bottom: 2rem;
 }
+
 .page-section .section {
     min-height: auto;
 }
 
+
 /* =====================================================
    AUTH PAGE (login.html — no canvas / FinBot)
    ===================================================== */
+
 body.auth-page {
     min-height: 100vh;
 }
+
 .auth-main {
     position: relative;
     z-index: 2;
@@ -2004,12 +1986,14 @@ body.auth-page {
     flex-direction: column;
     gap: 2.75rem;
 }
+
 .auth-page .modal-content.auth-panel {
     margin: 0 auto;
     width: 100%;
     max-width: 420px;
     animation: none;
 }
+
 .profile-readonly {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -2019,6 +2003,7 @@ body.auth-page {
     margin-bottom: 1rem;
     font-size: 0.95rem;
 }
+
 .profile-readonly span {
     color: rgba(255, 255, 255, 0.5);
     display: block;
