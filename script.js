@@ -303,11 +303,54 @@ function persistUser(user) {
     }
 }
 
+function getPortfolioStorageKey(user) {
+    return user ? `portfolio_${user.email || user.id}` : 'portfolio_guest';
+}
+
+function savePortfolioFallback(portfolio, user) {
+    try {
+        localStorage.setItem(getPortfolioStorageKey(user), JSON.stringify(normalizePortfolio(portfolio)));
+    } catch (error) {
+        console.warn('Unable to save portfolio fallback:', error);
+    }
+}
+
 function getPortfolioFallback(user) {
-    if (!user) return [];
-    if (Array.isArray(user.portfolio) && user.portfolio.length) return user.portfolio;
-    const stored = localStorage.getItem(`portfolio_${user.email || user.id}`);
+    const stored = localStorage.getItem(getPortfolioStorageKey(user));
     return normalizePortfolio(stored);
+}
+
+function getSavedPortfolioForUser(user) {
+    const serverPortfolio = normalizePortfolio(user.portfolio);
+    if (serverPortfolio.length) return serverPortfolio;
+    return getPortfolioFallback(user);
+}
+
+function normalizePortfolioItem(item) {
+    if (!item) return null;
+    if (typeof item === 'string') {
+        return { symbol: item };
+    }
+    if (typeof item === 'object' && item.symbol) {
+        return item;
+    }
+    return null;
+}
+
+function resolvePortfolioStock(rawItem) {
+    const item = normalizePortfolioItem(rawItem);
+    if (!item) return null;
+    const symbol = String(item.symbol || '').toUpperCase();
+    if (!symbol) return null;
+    const liveStock = stocksData.find(s => s.symbol === symbol || s.ticker === symbol);
+    return {
+        symbol,
+        name: item.name || (liveStock ? liveStock.name : symbol),
+        market: item.market || (liveStock ? liveStock.market : 'NSE'),
+        price: item.price != null ? Number(item.price) : (liveStock ? liveStock.price : 0),
+        change: item.change != null ? Number(item.change) : (liveStock ? liveStock.change : 0),
+        changePercent: item.changePercent != null ? Number(item.changePercent) : (liveStock ? liveStock.changePercent : 0)
+    };
 }
 
 // Session management
@@ -328,6 +371,7 @@ class SessionManager {
         };
 
         persistUser(normalizedUser);
+        savePortfolioFallback(normalizedUser.portfolio, normalizedUser);
         this.currentUser = normalizedUser;
         this.updateUI();
         refreshPortfolioGrid();
@@ -418,13 +462,19 @@ async function handleLogin(event) {
         const data = await postToSheets('login', { email, password });
 
         if (data.success) {
-            sessionManager.saveSession({
+            const portalUser = {
                 id: data.id,
                 name: data.name,
                 email: data.email || email,
-                portfolio: data.portfolio,
-                savedStocks: data.savedStocks
-            });
+                portfolio: getSavedPortfolioForUser({
+                    ...data,
+                    email: data.email || email,
+                    id: data.id
+                }),
+                savedStocks: normalizePortfolio(data.savedStocks)
+            };
+
+            sessionManager.saveSession(portalUser);
             closeLoginModal();
             const lf = document.getElementById('loginForm');
             if (lf) lf.reset();
@@ -434,7 +484,7 @@ async function handleLogin(event) {
             alert(data.message || 'Login failed!');
         }
     } catch (error) {
-        console.error('Login failed:', error);
+        console.error('user name or password is incorrect:', error);
         alert(error.message || 'Network error. Please try again.');
     } finally {
         submitButton.disabled = false;
@@ -462,12 +512,13 @@ async function handleSignup(event) {
         const data = await postToSheets('signup', { name, email, password });
 
         if (data.success) {
+            const guestSavedPortfolio = getPortfolioFallback(null);
             sessionManager.saveSession({
                 id: data.id,
                 name: data.name || name,
                 email: data.email || email,
-                portfolio: data.portfolio,
-                savedStocks: data.savedStocks
+                portfolio: normalizePortfolio(data.portfolio).length ? normalizePortfolio(data.portfolio) : guestSavedPortfolio,
+                savedStocks: normalizePortfolio(data.savedStocks)
             });
             closeSignupModal();
             const sf = document.getElementById('signupForm');
@@ -555,13 +606,24 @@ function initUserCountFloater() {
 }
 
 async function addToPortfolio(symbol) {
-    if (!sessionManager.isLoggedIn()) {
-        alert('Please login to add stocks to your portfolio!');
-        window.location.href = 'login.html?return=stocks.html';
+    const stock = stocksData.find(s => s.symbol === symbol);
+    if (!stock) {
+        alert('Unable to find stock details for ' + symbol);
         return;
     }
 
-    const stock = stocksData.find(s => s.symbol === symbol);
+    if (!sessionManager.isLoggedIn()) {
+        const guestPortfolio = normalizePortfolio(getPortfolioFallback(null));
+        if (guestPortfolio.some(s => s.symbol === symbol || s === symbol)) {
+            alert(`${symbol} is already in your portfolio!`);
+            return;
+        }
+        guestPortfolio.push(stock);
+        savePortfolioFallback(guestPortfolio, null);
+        alert(`${symbol} added to your local portfolio. Login to sync it across devices.`);
+        return;
+    }
+
     const user = sessionManager.getSession();
     user.portfolio = normalizePortfolio(user.portfolio);
 
@@ -835,30 +897,32 @@ function refreshPortfolioGrid() {
     const status = document.getElementById('portfolioStatus');
     if (!grid || !status) return;
 
-    if (!sessionManager.isLoggedIn()) {
-        grid.innerHTML = '';
-        status.textContent = 'Login to view your portfolio.';
-        return;
-    }
-
-    const user = sessionManager.getSession();
-    const portfolio = normalizePortfolio(user.portfolio);
+    const loggedIn = sessionManager.isLoggedIn();
+    const user = loggedIn ? sessionManager.getSession() : null;
+    const portfolio = loggedIn ? normalizePortfolio(user.portfolio) : [];
     const fallbackPortfolio = getPortfolioFallback(user);
     const activePortfolio = portfolio.length ? portfolio : fallbackPortfolio;
 
     if (!activePortfolio.length) {
-        grid.innerHTML = '';
-        status.textContent = 'Your portfolio is empty. Add stocks from the Stocks page.';
+        const message = loggedIn ?
+            'Your portfolio is empty. Add stocks from the Stocks page.' :
+            'Login to view your portfolio.';
+
+        status.textContent = message;
+        grid.innerHTML = `
+            <div class="portfolio-empty">
+                <p>${message}</p>
+                <a href="stocks.html" class="cta-button">Browse Stocks</a>
+            </div>
+        `;
         return;
     }
 
-    status.textContent = `${activePortfolio.length} stock${activePortfolio.length === 1 ? '' : 's'} in your portfolio`;
-    grid.innerHTML = activePortfolio.map(stock => {
-        const liveStock = stocksData.find(s => s.symbol === stock.symbol);
-        const price = liveStock ? liveStock.price : stock.price || 0;
-        const change = liveStock ? liveStock.change : stock.change || 0;
-        const changePercent = liveStock ? liveStock.changePercent : stock.changePercent || 0;
-        const trendClass = change >= 0 ? 'positive' : 'negative';
+    const displayItems = activePortfolio.map(resolvePortfolioStock).filter(Boolean);
+
+    status.textContent = `${displayItems.length} stock${displayItems.length === 1 ? '' : 's'} in your portfolio`;
+    grid.innerHTML = displayItems.map(stock => {
+        const trendClass = stock.change >= 0 ? 'positive' : 'negative';
 
         return `
             <div class="portfolio-card">
@@ -867,10 +931,10 @@ function refreshPortfolioGrid() {
                         <h3>${stock.name || stock.symbol}</h3>
                         <span class="portfolio-symbol">${stock.symbol}</span>
                     </div>
-                    <span class="portfolio-change ${trendClass}">${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent.toFixed(2)}%)</span>
+                    <span class="portfolio-change ${trendClass}">${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)} (${stock.changePercent.toFixed(2)}%)</span>
                 </div>
                 <div class="portfolio-card-body">
-                    <span class="portfolio-price">₹${price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span class="portfolio-price">₹${stock.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
             </div>`;
     }).join('');
