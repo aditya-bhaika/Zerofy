@@ -454,15 +454,23 @@ async function handleSignup(event) {
 }
 
 function showForgotPassword(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const panel = document.getElementById('forgotPasswordPanel');
-    if (panel) panel.hidden = false;
+    if (panel) {
+        panel.hidden = false;
+        panel.style.display = 'block';
+        panel.setAttribute('aria-hidden', 'false');
+    }
 }
 
 function hideForgotPassword(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const panel = document.getElementById('forgotPasswordPanel');
-    if (panel) panel.hidden = true;
+    if (panel) {
+        panel.hidden = true;
+        panel.style.display = 'none';
+        panel.setAttribute('aria-hidden', 'true');
+    }
 }
 
 function handleForgotPassword(event) {
@@ -475,8 +483,7 @@ function handleForgotPassword(event) {
     }
 
     alert(`If an account exists for ${email}, password reset instructions will be sent to that email.`);
-    const panel = document.getElementById('forgotPasswordPanel');
-    if (panel) panel.hidden = true;
+    hideForgotPassword();
 }
 
 async function addToPortfolio(symbol) {
