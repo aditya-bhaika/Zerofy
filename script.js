@@ -453,6 +453,31 @@ async function handleSignup(event) {
     }
 }
 
+function showForgotPassword(event) {
+    event.preventDefault();
+    const panel = document.getElementById('forgotPasswordPanel');
+    if (panel) panel.hidden = false;
+}
+
+function hideForgotPassword(event) {
+    event.preventDefault();
+    const panel = document.getElementById('forgotPasswordPanel');
+    if (panel) panel.hidden = true;
+}
+
+function handleForgotPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById('resetEmail') ? .value.trim();
+    if (!email) {
+        alert('Please enter your email address.');
+        return;
+    }
+
+    alert(`If an account exists for ${email}, password reset instructions will be sent to that email.`);
+    const panel = document.getElementById('forgotPasswordPanel');
+    if (panel) panel.hidden = true;
+}
+
 async function addToPortfolio(symbol) {
     if (!sessionManager.isLoggedIn()) {
         alert('Please login to add stocks to your portfolio!');
@@ -951,14 +976,32 @@ document.addEventListener('click', (e) => {
 
 // ===== RESPONSIVE NAVBAR ADJUSTMENTS =====
 
+let finbotScrollTimeout = null;
+let lastScrollY = window.scrollY;
+
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-    if (window.scrollY > 50) {
-        navbar.style.boxShadow = '0 5px 25px rgba(0, 0, 0, 0.5)';
-    } else {
-        navbar.style.boxShadow = '0 2px 20px rgba(255, 255, 255, 0.1)';
+    if (navbar) {
+        if (window.scrollY > 50) {
+            navbar.style.boxShadow = '0 5px 25px rgba(0, 0, 0, 0.5)';
+        } else {
+            navbar.style.boxShadow = '0 2px 20px rgba(255, 255, 255, 0.1)';
+        }
     }
+
+    const finbot = document.getElementById('finbot');
+    if (finbot) {
+        const delta = window.scrollY - lastScrollY;
+        const offset = Math.max(-6, Math.min(6, delta * 0.5));
+        finbot.style.setProperty('--finbot-scroll-offset', `${offset}px`);
+
+        clearTimeout(finbotScrollTimeout);
+        finbotScrollTimeout = window.setTimeout(() => {
+            finbot.style.setProperty('--finbot-scroll-offset', '0px');
+        }, 120);
+    }
+
+    lastScrollY = window.scrollY;
 });
 
 // ===== ERROR HANDLING =====
