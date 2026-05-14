@@ -273,6 +273,43 @@ async function postToSheets(action, payload = {}) {
 
 // ===== USER AUTHENTICATION & DATABASE =====
 
+const CURRENT_USER_STORAGE_KEY = 'currentUser';
+
+function getStoredUser() {
+    const stored = localStorage.getItem(CURRENT_USER_STORAGE_KEY) || sessionStorage.getItem(CURRENT_USER_STORAGE_KEY);
+    if (!stored) return null;
+    try {
+        const user = JSON.parse(stored);
+        user.portfolio = normalizePortfolio(user.portfolio);
+        user.savedStocks = normalizePortfolio(user.savedStocks);
+        if (user.dateOfBirth == null) user.dateOfBirth = '';
+        if (user.plan == null) user.plan = '';
+        return user;
+    } catch (error) {
+        console.warn('Clearing invalid saved session:', error);
+        localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+        sessionStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+        return null;
+    }
+}
+
+function persistUser(user) {
+    try {
+        const value = JSON.stringify(user);
+        localStorage.setItem(CURRENT_USER_STORAGE_KEY, value);
+        sessionStorage.setItem(CURRENT_USER_STORAGE_KEY, value);
+    } catch (e) {
+        console.warn('Unable to persist user session:', e);
+    }
+}
+
+function getPortfolioFallback(user) {
+    if (!user) return [];
+    if (Array.isArray(user.portfolio) && user.portfolio.length) return user.portfolio;
+    const stored = localStorage.getItem(`portfolio_${user.email || user.id}`);
+    return normalizePortfolio(stored);
+}
+
 // Session management
 class SessionManager {
     constructor() {
@@ -280,12 +317,7 @@ class SessionManager {
     }
 
     saveSession(user) {
-        let prev = {};
-        try {
-            prev = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-        } catch (e) {
-            prev = {};
-        }
+        let prev = getStoredUser() || {};
         const merged = {...prev, ...user };
         const normalizedUser = {
             ...merged,
@@ -295,31 +327,32 @@ class SessionManager {
             plan: merged.plan != null ? String(merged.plan) : ''
         };
 
-        sessionStorage.setItem('currentUser', JSON.stringify(normalizedUser));
+        persistUser(normalizedUser);
         this.currentUser = normalizedUser;
         this.updateUI();
+        refreshPortfolioGrid();
     }
 
     loadSession() {
-        const stored = sessionStorage.getItem('currentUser');
-        if (stored) {
-            try {
-                this.currentUser = JSON.parse(stored);
-                this.currentUser.portfolio = normalizePortfolio(this.currentUser.portfolio);
-                this.currentUser.savedStocks = normalizePortfolio(this.currentUser.savedStocks);
-                if (this.currentUser.dateOfBirth == null) this.currentUser.dateOfBirth = '';
-                if (this.currentUser.plan == null) this.currentUser.plan = '';
-                this.updateUI();
-                return this.currentUser;
-            } catch (error) {
-                console.warn('Clearing invalid saved session:', error);
-                sessionStorage.removeItem('currentUser');
-            }
+        const user = getStoredUser();
+        if (user) {
+            this.currentUser = user;
+            this.updateUI();
+            refreshPortfolioGrid();
+            return user;
         }
         return null;
     }
 
     logout() {
+        localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+        sessionStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+        this.currentUser = null;
+        this.updateUI();
+    }
+
+    logout() {
+        localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
         this.currentUser = null;
         this.updateUI();
@@ -439,6 +472,8 @@ async function handleSignup(event) {
             closeSignupModal();
             const sf = document.getElementById('signupForm');
             if (sf) sf.reset();
+            setStoredUserCount(getStoredUserCount() + 1);
+            updateUserCountFloater();
             alert('Signup successful!');
             window.location.href = getLoginReturnUrl();
         } else {
@@ -486,6 +521,39 @@ function handleForgotPassword(event) {
     hideForgotPassword();
 }
 
+function getStoredUserCount() {
+    const stored = localStorage.getItem('zerofyUserCount');
+    if (stored !== null && !Number.isNaN(Number(stored))) {
+        return Number(stored);
+    }
+    const initialCount = 18000 + Math.floor(Math.random() * 12000);
+    localStorage.setItem('zerofyUserCount', String(initialCount));
+    return initialCount;
+}
+
+function setStoredUserCount(value) {
+    localStorage.setItem('zerofyUserCount', String(value));
+}
+
+function updateUserCountFloater() {
+    const countEl = document.getElementById('userCountValue');
+    if (!countEl) return;
+    countEl.textContent = getStoredUserCount().toLocaleString('en-IN');
+}
+
+function animateUserCountFloater() {
+    const currentCount = getStoredUserCount();
+    const nextCount = currentCount + 1 + Math.floor(Math.random() * 3);
+    setStoredUserCount(nextCount);
+    updateUserCountFloater();
+}
+
+function initUserCountFloater() {
+    if (!document.getElementById('userCountFloater')) return;
+    updateUserCountFloater();
+    window.setInterval(animateUserCountFloater, 12000);
+}
+
 async function addToPortfolio(symbol) {
     if (!sessionManager.isLoggedIn()) {
         alert('Please login to add stocks to your portfolio!');
@@ -495,9 +563,10 @@ async function addToPortfolio(symbol) {
 
     const stock = stocksData.find(s => s.symbol === symbol);
     const user = sessionManager.getSession();
+    user.portfolio = normalizePortfolio(user.portfolio);
 
     // Check if stock already in portfolio (client-side only)
-    if (user.portfolio && user.portfolio.some(s => s.symbol === symbol)) {
+    if (user.portfolio.some(s => s.symbol === symbol)) {
         alert(`${symbol} is already in your portfolio!`);
         return;
     }
@@ -513,12 +582,26 @@ async function addToPortfolio(symbol) {
                 user.portfolio.push(stock);
             }
             sessionManager.saveSession(user);
+            refreshPortfolioGrid();
             alert(`${symbol} added to your portfolio!`);
         } else {
             alert(data.message || 'Failed to add stock!');
         }
     } catch (error) {
         console.error('Portfolio update failed:', error);
+
+        const currentUser = sessionManager.getSession();
+        if (currentUser) {
+            currentUser.portfolio = normalizePortfolio(currentUser.portfolio);
+            if (!currentUser.portfolio.some(s => s.symbol === symbol)) {
+                currentUser.portfolio.push(stock);
+            }
+            sessionManager.saveSession(currentUser);
+            localStorage.setItem(`portfolio_${currentUser.email || currentUser.id}`, JSON.stringify(currentUser.portfolio));
+            alert(`${symbol} added to your portfolio locally.`);
+            return;
+        }
+
         alert(error.message || 'Network error. Please try again.');
     }
 }
@@ -572,17 +655,86 @@ function switchToLogin() {
 // ===== STOCK DATA =====
 
 const stocksData = [
-    { symbol: 'AAPL', name: 'Apple Inc.', price: 189.45, change: 2.5, changePercent: 1.33 },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', price: 375.20, change: 5.10, changePercent: 1.38 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.80, change: 3.20, changePercent: 2.29 },
-    { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 178.50, change: -2.30, changePercent: -1.27 },
-    { symbol: 'TSLA', name: 'Tesla Inc.', price: 245.30, change: 8.50, changePercent: 3.58 },
-    { symbol: 'META', name: 'Meta Platforms Inc.', price: 485.60, change: -5.40, changePercent: -1.10 },
-    { symbol: 'NFLX', name: 'Netflix Inc.', price: 445.20, change: 12.30, changePercent: 2.84 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.40, change: 25.80, changePercent: 3.04 },
-    { symbol: 'JPM', name: 'JPMorgan Chase', price: 158.90, change: 2.10, changePercent: 1.33 },
-    { symbol: 'V', name: 'Visa Inc.', price: 265.30, change: 3.50, changePercent: 1.33 }
+    { symbol: 'TCS', ticker: 'TCS.NS', market: 'NSE', name: 'Tata Consultancy Services', price: 3350.00, change: 0.00, changePercent: 0.00 },
+    { symbol: 'RELIANCE', ticker: 'RELIANCE.NS', market: 'NSE', name: 'Reliance Industries', price: 2628.00, change: 0.00, changePercent: 0.00 },
+    { symbol: 'INFY', ticker: 'INFY.NS', market: 'NSE', name: 'Infosys', price: 1855.50, change: 0.00, changePercent: 0.00 },
+    { symbol: 'HDFC', ticker: 'HDFC.NS', market: 'NSE', name: 'HDFC Bank', price: 1625.20, change: 0.00, changePercent: 0.00 },
+    { symbol: 'ICICIBANK', ticker: 'ICICIBANK.NS', market: 'NSE', name: 'ICICI Bank', price: 940.70, change: 0.00, changePercent: 0.00 },
+    { symbol: 'BHARTIARTL', ticker: 'BHARTIARTL.NS', market: 'NSE', name: 'Bharti Airtel', price: 930.00, change: 0.00, changePercent: 0.00 },
+    { symbol: 'LT', ticker: 'LT.NS', market: 'NSE', name: 'Larsen & Toubro', price: 2255.00, change: 0.00, changePercent: 0.00 },
+    { symbol: 'NESTLEIND', ticker: 'NESTLEIND.NS', market: 'NSE', name: 'Nestle India', price: 19750.00, change: 0.00, changePercent: 0.00 }
 ];
+
+function initializeStockHistory() {
+    stocksData.forEach(stock => {
+        if (!stock.history || !stock.history.length) {
+            const history = [];
+            const base = stock.price;
+            for (let i = 20; i > 0; i--) {
+                history.push(base * (1 + (Math.sin(i / 3) * 0.005) + (Math.random() - 0.5) * 0.004));
+            }
+            stock.history = history;
+        }
+    });
+}
+
+function updateStockPrice(stock, newPrice, change, changePercent) {
+    const previousPrice = stock.price;
+    const roundedPrice = Number(newPrice.toFixed(2));
+    stock.change = change !== undefined ? change : roundedPrice - previousPrice;
+    stock.changePercent = changePercent !== undefined ? changePercent : previousPrice ? ((roundedPrice - previousPrice) / previousPrice) * 100 : 0;
+    stock.price = roundedPrice;
+    stock.history = (stock.history || []).slice(-19).concat(roundedPrice);
+}
+
+function drawStockSparkline(canvas, history, positive) {
+    if (!canvas || !canvas.getContext || !history || !history.length) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.clientWidth || 260;
+    const height = canvas.clientHeight || 80;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    const min = Math.min(...history);
+    const max = Math.max(...history);
+    const range = Math.max(max - min, max * 0.01, 1);
+    const padding = 10;
+    const points = history.map((value, index) => {
+        const x = padding + ((width - padding * 2) * index) / (history.length - 1);
+        const y = height - padding - ((value - min) / range) * (height - padding * 2);
+        return { x, y };
+    });
+
+    const lineColor = positive ? 'rgba(0, 255, 153, 0.95)' : 'rgba(255, 103, 109, 0.95)';
+    ctx.beginPath();
+    points.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point.x, point.y);
+        else ctx.lineTo(point.x, point.y);
+    });
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.lineTo(width - padding, height - padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.closePath();
+    const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+    gradient.addColorStop(0, positive ? 'rgba(0, 255, 153, 0.18)' : 'rgba(255, 103, 109, 0.18)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.beginPath();
+    const lastPoint = points[points.length - 1];
+    ctx.arc(lastPoint.x, lastPoint.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = lineColor;
+    ctx.fill();
+}
 
 function fillStocksGrid(grid) {
     if (!grid) return;
@@ -592,21 +744,144 @@ function fillStocksGrid(grid) {
         const isPositive = stock.change >= 0;
         const stockCard = document.createElement('div');
         stockCard.className = 'stock-card';
+        stockCard.dataset.symbol = stock.symbol;
         stockCard.innerHTML = `
             <div class="stock-symbol">${stock.symbol}</div>
-            <div class="stock-name">${stock.name}</div>
-            <div class="stock-price">$${stock.price.toFixed(2)}</div>
+            <div class="stock-name">${stock.name} · ${stock.market}</div>
+            <div class="stock-price">₹${stock.price.toFixed(2)}</div>
             <div class="stock-change ${isPositive ? 'positive' : 'negative'}">
                 ${isPositive ? '▲' : '▼'} ${Math.abs(stock.change).toFixed(2)} (${stock.changePercent.toFixed(2)}%)
             </div>
+            <canvas class="stock-sparkline" aria-hidden="true"></canvas>
             <button class="stock-btn" onclick="addToPortfolio('${stock.symbol}')">Add to Portfolio</button>
         `;
         grid.appendChild(stockCard);
+        const canvas = stockCard.querySelector('.stock-sparkline');
+        drawStockSparkline(canvas, stock.history, isPositive);
     });
 }
 
-// ===== SPA NAVIGATION (navbar + full-page views) =====
+function refreshStocksGrid() {
+    const grid = document.getElementById('stocksGrid');
+    if (!grid) return;
 
+    stocksData.forEach(stock => {
+        const stockCard = grid.querySelector(`[data-symbol="${stock.symbol}"]`);
+        if (!stockCard) return;
+        const isPositive = stock.change >= 0;
+        const priceEl = stockCard.querySelector('.stock-price');
+        const changeEl = stockCard.querySelector('.stock-change');
+        const canvas = stockCard.querySelector('.stock-sparkline');
+
+        if (priceEl) priceEl.textContent = `₹${stock.price.toFixed(2)}`;
+        if (changeEl) {
+            changeEl.className = `stock-change ${isPositive ? 'positive' : 'negative'}`;
+            changeEl.textContent = `${isPositive ? '▲' : '▼'} ${Math.abs(stock.change).toFixed(2)} (${stock.changePercent.toFixed(2)}%)`;
+        }
+        drawStockSparkline(canvas, stock.history, isPositive);
+    });
+}
+
+async function fetchLiveStockQuotes() {
+    const grid = document.getElementById('stocksGrid');
+    if (!grid) return;
+    const symbols = stocksData.map(stock => stock.ticker).join(',');
+    try {
+        const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
+        if (!response.ok) throw new Error('Failed to fetch stock quotes');
+        const data = await response.json();
+        if (!data.quoteResponse || !Array.isArray(data.quoteResponse.result)) throw new Error('Invalid quote data');
+
+        data.quoteResponse.result.forEach(result => {
+            const stock = stocksData.find(s => s.ticker === result.symbol);
+            if (!stock) return;
+            const price = Number(result.regularMarketPrice) || stock.price;
+            const change = Number(result.regularMarketChange) || price - stock.price;
+            const changePercent = Number(result.regularMarketChangePercent) || (stock.price ? ((price - stock.price) / stock.price) * 100 : 0);
+            updateStockPrice(stock, price, change, changePercent);
+        });
+
+        refreshStocksGrid();
+        refreshPortfolioGrid();
+    } catch (error) {
+        simulateLiveStockUpdate();
+    }
+}
+
+function simulateLiveStockUpdate() {
+    stocksData.forEach(stock => {
+        const drift = stock.price * ((Math.random() - 0.5) * 0.006);
+        const newPrice = Math.max(20, stock.price + drift);
+        const change = newPrice - stock.price;
+        const changePercent = stock.price ? (change / stock.price) * 100 : 0;
+        updateStockPrice(stock, newPrice, change, changePercent);
+    });
+    refreshStocksGrid();
+    refreshPortfolioGrid();
+}
+
+function initStockUpdates() {
+    initializeStockHistory();
+    const grid = document.getElementById('stocksGrid');
+    if (!grid) return;
+
+    fillStocksGrid(grid);
+    fetchLiveStockQuotes();
+    window.setInterval(fetchLiveStockQuotes, 10000);
+}
+
+function refreshPortfolioGrid() {
+    const grid = document.getElementById('portfolioGrid');
+    const status = document.getElementById('portfolioStatus');
+    if (!grid || !status) return;
+
+    if (!sessionManager.isLoggedIn()) {
+        grid.innerHTML = '';
+        status.textContent = 'Login to view your portfolio.';
+        return;
+    }
+
+    const user = sessionManager.getSession();
+    const portfolio = normalizePortfolio(user.portfolio);
+    const fallbackPortfolio = getPortfolioFallback(user);
+    const activePortfolio = portfolio.length ? portfolio : fallbackPortfolio;
+
+    if (!activePortfolio.length) {
+        grid.innerHTML = '';
+        status.textContent = 'Your portfolio is empty. Add stocks from the Stocks page.';
+        return;
+    }
+
+    status.textContent = `${activePortfolio.length} stock${activePortfolio.length === 1 ? '' : 's'} in your portfolio`;
+    grid.innerHTML = activePortfolio.map(stock => {
+        const liveStock = stocksData.find(s => s.symbol === stock.symbol);
+        const price = liveStock ? liveStock.price : stock.price || 0;
+        const change = liveStock ? liveStock.change : stock.change || 0;
+        const changePercent = liveStock ? liveStock.changePercent : stock.changePercent || 0;
+        const trendClass = change >= 0 ? 'positive' : 'negative';
+
+        return `
+            <div class="portfolio-card">
+                <div class="portfolio-card-head">
+                    <div>
+                        <h3>${stock.name || stock.symbol}</h3>
+                        <span class="portfolio-symbol">${stock.symbol}</span>
+                    </div>
+                    <span class="portfolio-change ${trendClass}">${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent.toFixed(2)}%)</span>
+                </div>
+                <div class="portfolio-card-body">
+                    <span class="portfolio-price">₹${price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function populatePortfolio() {
+    sessionManager.loadSession();
+    refreshPortfolioGrid();
+}
+
+// ===== SPA NAVIGATION (navbar + full-page views) =====
 const SPA_ROUTE_IDS = ['home'];
 
 function showPage(page) {
@@ -729,7 +1004,7 @@ function initScrollAnimations() {
 
 
 function populateStocks() {
-    fillStocksGrid(document.getElementById('stocksGrid'));
+    initStockUpdates();
 }
 
 // ===== SMOOTH SCROLLING =====
@@ -941,6 +1216,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initFinBot();
     initScrollAnimations();
     initProfilePage();
+    initUserCountFloater();
+    populatePortfolio();
 
     // Hash links: SPA routes vs in-page scroll targets
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
