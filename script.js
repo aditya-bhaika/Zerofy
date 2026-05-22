@@ -274,6 +274,7 @@ async function postToSheets(action, payload = {}) {
 // ===== USER AUTHENTICATION & DATABASE =====
 
 const CURRENT_USER_STORAGE_KEY = 'currentUser';
+const PENDING_PORTFOLIO_STOCK_KEY = 'pendingPortfolioStock';
 
 function getStoredUser() {
     const stored = localStorage.getItem(CURRENT_USER_STORAGE_KEY) || sessionStorage.getItem(CURRENT_USER_STORAGE_KEY);
@@ -324,6 +325,28 @@ function getSavedPortfolioForUser(user) {
     const serverPortfolio = normalizePortfolio(user.portfolio);
     if (serverPortfolio.length) return serverPortfolio;
     return getPortfolioFallback(user);
+}
+
+function getStockBySymbol(symbol) {
+    const normalizedSymbol = String(symbol || '').toUpperCase();
+    return stocksData.find(s => s.symbol === normalizedSymbol);
+}
+
+function setPendingPortfolioStock(symbol) {
+    try {
+        sessionStorage.setItem(PENDING_PORTFOLIO_STOCK_KEY, String(symbol || '').toUpperCase());
+    } catch (error) {
+        localStorage.setItem(PENDING_PORTFOLIO_STOCK_KEY, String(symbol || '').toUpperCase());
+    }
+}
+
+function getPendingPortfolioStock() {
+    return sessionStorage.getItem(PENDING_PORTFOLIO_STOCK_KEY) || localStorage.getItem(PENDING_PORTFOLIO_STOCK_KEY);
+}
+
+function clearPendingPortfolioStock() {
+    sessionStorage.removeItem(PENDING_PORTFOLIO_STOCK_KEY);
+    localStorage.removeItem(PENDING_PORTFOLIO_STOCK_KEY);
 }
 
 function normalizePortfolioItem(item) {
@@ -475,11 +498,12 @@ async function handleLogin(event) {
             };
 
             sessionManager.saveSession(portalUser);
+            const pendingStockAdded = await processPendingPortfolioAdd();
             closeLoginModal();
             const lf = document.getElementById('loginForm');
             if (lf) lf.reset();
-            alert('Login successful!');
-            window.location.href = getLoginReturnUrl();
+            alert(pendingStockAdded ? 'Login successful! Your portfolio is ready.' : 'Login successful!');
+            window.location.href = pendingStockAdded ? 'portfolio.html' : getLoginReturnUrl();
         } else {
             alert(data.message || 'Login failed!');
         }
@@ -520,13 +544,14 @@ async function handleSignup(event) {
                 portfolio: normalizePortfolio(data.portfolio).length ? normalizePortfolio(data.portfolio) : guestSavedPortfolio,
                 savedStocks: normalizePortfolio(data.savedStocks)
             });
+            const pendingStockAdded = await processPendingPortfolioAdd();
             closeSignupModal();
             const sf = document.getElementById('signupForm');
             if (sf) sf.reset();
             setStoredUserCount(getStoredUserCount() + 1);
             updateUserCountFloater();
-            alert('Signup successful!');
-            window.location.href = getLoginReturnUrl();
+            alert(pendingStockAdded ? 'Signup successful! Your portfolio is ready.' : 'Signup successful!');
+            window.location.href = pendingStockAdded ? 'portfolio.html' : getLoginReturnUrl();
         } else {
             alert(data.message || 'Signup failed!');
         }
@@ -606,22 +631,36 @@ function initUserCountFloater() {
 }
 
 async function addToPortfolio(symbol) {
-    const stock = stocksData.find(s => s.symbol === symbol);
+    const stock = getStockBySymbol(symbol);
     if (!stock) {
         alert('Unable to find stock details for ' + symbol);
         return;
     }
 
     if (!sessionManager.isLoggedIn()) {
-        const guestPortfolio = normalizePortfolio(getPortfolioFallback(null));
-        if (guestPortfolio.some(s => s.symbol === symbol || s === symbol)) {
-            alert(`${symbol} is already in your portfolio!`);
-            return;
-        }
-        guestPortfolio.push(stock);
-        savePortfolioFallback(guestPortfolio, null);
-        alert(`${symbol} added to your local portfolio. Login to sync it across devices.`);
+        setPendingPortfolioStock(symbol);
+        window.location.href = 'login.html?return=portfolio.html';
         return;
+    }
+
+    const added = await addStockToLoggedInPortfolio(symbol);
+    if (added && !/portfolio\.html$/i.test(window.location.pathname)) {
+        window.location.href = 'portfolio.html';
+    }
+}
+
+async function addStockToLoggedInPortfolio(symbol, options = {}) {
+    const { showAlerts = true } = options;
+    const stock = getStockBySymbol(symbol);
+    if (!stock) {
+        if (showAlerts) alert('Unable to find stock details for ' + symbol);
+        return false;
+    }
+
+    if (!sessionManager.isLoggedIn()) {
+        setPendingPortfolioStock(symbol);
+        window.location.href = 'login.html?return=portfolio.html';
+        return false;
     }
 
     const user = sessionManager.getSession();
@@ -629,8 +668,8 @@ async function addToPortfolio(symbol) {
 
     // Check if stock already in portfolio (client-side only)
     if (user.portfolio.some(s => s.symbol === symbol)) {
-        alert(`${symbol} is already in your portfolio!`);
-        return;
+        if (showAlerts) alert(`${symbol} is already in your portfolio!`);
+        return true;
     }
 
     try {
@@ -645,9 +684,11 @@ async function addToPortfolio(symbol) {
             }
             sessionManager.saveSession(user);
             refreshPortfolioGrid();
-            alert(`${symbol} added to your portfolio!`);
+            if (showAlerts) alert(`${symbol} added to your portfolio!`);
+            return true;
         } else {
-            alert(data.message || 'Failed to add stock!');
+            if (showAlerts) alert(data.message || 'Failed to add stock!');
+            return false;
         }
     } catch (error) {
         console.error('Portfolio update failed:', error);
@@ -660,12 +701,26 @@ async function addToPortfolio(symbol) {
             }
             sessionManager.saveSession(currentUser);
             localStorage.setItem(`portfolio_${currentUser.email || currentUser.id}`, JSON.stringify(currentUser.portfolio));
-            alert(`${symbol} added to your portfolio locally.`);
-            return;
+            if (showAlerts) alert(`${symbol} added to your portfolio locally.`);
+            return true;
         }
 
-        alert(error.message || 'Network error. Please try again.');
+        if (showAlerts) alert(error.message || 'Network error. Please try again.');
+        return false;
     }
+}
+
+async function processPendingPortfolioAdd() {
+    const pendingSymbol = getPendingPortfolioStock();
+    if (!pendingSymbol || !sessionManager.isLoggedIn()) return false;
+
+    const added = await addStockToLoggedInPortfolio(pendingSymbol, { showAlerts: false });
+    if (added) {
+        clearPendingPortfolioStock();
+        return true;
+    }
+
+    return false;
 }
 
 // ===== LOGIN/SIGNUP MODALS =====
